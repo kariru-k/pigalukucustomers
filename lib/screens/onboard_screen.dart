@@ -1,4 +1,6 @@
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:piga_luku_customers/constants.dart';
 
 class OnBoardScreen extends StatefulWidget {
   const OnBoardScreen({Key? key}) : super(key: key);
@@ -13,34 +15,69 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
       initialPage: 0
   );
 
+  int _currentPage = 0;
+
   final List<Widget> _pages = [
     Column(
       children: [
-        Image.asset('images/onboarding_clothes.jpg'),
-        Text('Shop The Latest Trends')
+        Expanded(child: Image.asset('images/onboarding_clothes.jpg')),
+        const Text(
+          'Shop The Latest Trends',
+          style: kPageViewTextStyle,
+          textAlign: TextAlign.center,
+        )
       ],
     ),
     Column(
       children: [
-        Image.asset('images/onboarding_babe.jpg'),
-        Text('Order Online For Your Convenience')
+        Expanded(child: Image.asset('images/onboarding_babe.jpg')),
+        const Text(
+          'Order Online At Your Convenience',
+          style: kPageViewTextStyle,
+          textAlign: TextAlign.center,
+        )
       ],
     ),
     Column(
       children: [
-        Image.asset('images/onboarding_suit.jpg'),
-        Text('Look as stylish as you can Be!')
+        Expanded(child: Image.asset('images/onboarding_suit.jpg')),
+        const Text(
+          'Look as stylish as you can Be!',
+          style: kPageViewTextStyle,
+          textAlign: TextAlign.center,
+        )
       ],
     )
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _controller,
-        children: [],
-      ),
+    return Column(
+      children: [
+        Expanded(
+          child: PageView(
+            controller: _controller,
+            children: _pages,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 20,),
+        DotsIndicator(
+          dotsCount: _pages.length,
+          position: _currentPage.toDouble(),
+          decorator: DotsDecorator(
+              size: const Size.square(9.0),
+              activeSize: const Size(18.0, 9.0),
+              activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+              activeColor: Colors.deepPurpleAccent
+          ),
+        ),
+        const SizedBox(height: 20,),
+      ],
     );
   }
 }
