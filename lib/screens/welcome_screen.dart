@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:piga_luku_customers/screens/login_screen.dart';
 import 'package:piga_luku_customers/screens/onboard_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -15,48 +16,49 @@ class WelcomeScreen extends StatelessWidget {
                 right: -1.0,
                 top: 2.0,
                 child: TextButton(
-                  onPressed: () {  },
+                  onPressed: () {},
                   child: const Text(
                     'Skip',
                     style: TextStyle(
-                      color: Colors.deepPurpleAccent,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0
-                    ),
+                        color: Colors.deepPurpleAccent,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0),
                   ),
-                )
-            ),
+                )),
             Column(
               children: [
                 const Expanded(child: OnBoardScreen()),
                 const Text('Ready to Order from your nearest shop?'),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurpleAccent
-                  ),
+                      backgroundColor: Colors.deepPurpleAccent),
                   child: const Text('Set Delivery Location'),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 TextButton(
-                  onPressed: () {  },
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()));
+                  },
                   child: RichText(
                     text: const TextSpan(
                         text: "Already a Customer? ",
-                        style: TextStyle(
-                            color: Colors.black
-                        ),
+                        style: TextStyle(color: Colors.black),
                         children: [
                           TextSpan(
                               text: 'Log In',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black
-                              )
-                          )
-                        ]
-                    ),
+                                  color: Colors.black))
+                        ]),
                   ),
                 )
               ],
