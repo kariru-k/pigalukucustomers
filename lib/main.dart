@@ -12,9 +12,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.deepPurpleAccent
+      ),
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }
@@ -30,6 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     Timer(
       const Duration(
