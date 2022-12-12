@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.piga_luku_customers">
    <application
-        android:label="piga_luku_customers"
+        android:label="Piga Luku"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

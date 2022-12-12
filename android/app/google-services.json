@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "390174952980",
+    "project_id": "piga-luku-customer-app",
+    "storage_bucket": "piga-luku-customer-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390174952980:android:606d3c3a01897f1e39a101",
+        "android_client_info": {
+          "package_name": "com.example.piga_luku_customers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "390174952980-c10coujm1e24v80qvuk9lod1bd79l45k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.piga_luku_customers",
+            "certificate_hash": "40f7b774e4b7c4d40da9713a0fab0833829b073f"
+          }
+        },
+        {
+          "client_id": "390174952980-nk4tks050rsmpko99jlurfnsbboe90s5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDf_HJfR0rAT4cLWuCr7kD_vO1rRB2GI7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "390174952980-nk4tks050rsmpko99jlurfnsbboe90s5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

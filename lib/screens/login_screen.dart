@@ -90,12 +90,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 TextField(
                                   decoration: const InputDecoration(
                                       prefixText: "+254",
-                                      labelText: "Enter Your Phone Number (10 digits)"
+                                      labelText: "Enter Your Phone Number (9 digits)"
                                   ),
                                   autofocus: true,
-                                  maxLength: 10,
+                                  maxLength: 9,
                                   onChanged: (value){
-                                    if(value.length == 10){
+                                    if(value.length == 9){
                                       myState((){
                                         _validPhoneNumber = true;
                                       });
