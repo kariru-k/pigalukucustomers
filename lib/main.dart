@@ -1,10 +1,27 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/constants.dart';
+import 'package:piga_luku_customers/firebase_options.dart';
+import 'package:piga_luku_customers/providers/auth_providers.dart';
+import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:piga_luku_customers/screens/welcome_screen.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
+  runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_)=>AuthProvider(),
+        )
+      ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -39,9 +56,17 @@ class _SplashScreenState extends State<SplashScreen> {
       const Duration(
         seconds: 3
       ), () {
-        Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (context) => const WelcomeScreen()
-        ));
+        FirebaseAuth.instance.authStateChanges().listen((User? user) {
+          if(user==null){
+            Navigator.pushReplacement(context, MaterialPageRoute(
+                builder: (context)=>const WelcomeScreen()
+            ));
+          }else{
+            Navigator.pushReplacement(context, MaterialPageRoute(
+                builder: (context)=>const HomeScreen()
+            ));
+          }
+        });
     }
     );
   }

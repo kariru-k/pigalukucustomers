@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:piga_luku_customers/providers/auth_providers.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,10 +11,16 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
-  bool _validPhoneNumber = false;
+
 
   @override
   Widget build(BuildContext context) {
+
+    final auth = Provider.of<AuthProvider>(context);
+
+    bool validPhoneNumber = false;
+    final phoneNumberController = TextEditingController();
+
     return Scaffold(
         body: StatefulBuilder(
           builder: (context, StateSetter myState){
@@ -93,38 +101,57 @@ class _LoginScreenState extends State<LoginScreen> {
                                       labelText: "Enter Your Phone Number (9 digits)"
                                   ),
                                   autofocus: true,
+                                  controller: phoneNumberController,
                                   maxLength: 9,
                                   onChanged: (value){
                                     if(value.length == 9){
                                       myState((){
-                                        _validPhoneNumber = true;
+                                        validPhoneNumber = true;
                                       });
                                     } else {
                                       myState((){
-                                        _validPhoneNumber = false;
+                                        validPhoneNumber = false;
                                       });
                                     }
                                   },
                                   keyboardType: TextInputType.phone,
                                 ),
-                                const SizedBox(
-                                  height: 15,
+                                Visibility(
+                                  visible: auth.error=='Invalid OTP'? true: false,
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                          '${auth.error}. Please Try Again!',
+                                        style: const TextStyle(
+                                          color: Colors.redAccent,
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.w600
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5,)
+                                    ],
+                                  ),
                                 ),
+                                const SizedBox(height: 15,),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Expanded(
                                       child: AbsorbPointer(
-                                        absorbing: _validPhoneNumber ? false:true,
+                                        absorbing: validPhoneNumber ? false:true,
                                         child: ElevatedButton(
                                           onPressed: () {
+                                            String number = '+254${phoneNumberController.text}';
+                                              auth.verifyPhone(context, number).then((value){
+                                                phoneNumberController.clear();
+                                              });
                                           },
                                           style: ButtonStyle(
-                                              backgroundColor: _validPhoneNumber ? MaterialStateProperty.all(Theme.of(context).primaryColor) : MaterialStateProperty.all(Colors.grey)
+                                              backgroundColor: validPhoneNumber ? MaterialStateProperty.all(Theme.of(context).primaryColor) : MaterialStateProperty.all(Colors.grey)
                                           ),
                                           child: Text(
-                                              _validPhoneNumber ? 'CONTINUE' : 'ENTER PHONE NUMBER'
+                                              validPhoneNumber ? 'CONTINUE' : 'ENTER PHONE NUMBER'
                                           ),
                                         ),
                                       ),
