@@ -5,6 +5,7 @@ import 'package:piga_luku_customers/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
+  static const String id = 'home-screen';
   const HomeScreen({Key? key}) : super(key: key);
 
   @override

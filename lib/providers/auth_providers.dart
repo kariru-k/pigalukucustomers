@@ -36,7 +36,7 @@ class AuthProvider with ChangeNotifier{
           verificationFailed: verificationFailed,
           codeSent: smsOtpSend,
           codeAutoRetrievalTimeout: (String verId){
-            this.verificationId = verId;
+            verificationId = verId;
           }
       );
       
@@ -92,14 +92,12 @@ class AuthProvider with ChangeNotifier{
                   if(user!=null){
                     Navigator.of(context).pop();
                     //Go to the home screen
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context)=>const HomeScreen()
-                    ));
+                    Navigator.pushReplacementNamed(context, HomeScreen.id);
                   }else {
                     print('Login Failed');
                   }
                 }catch(e){
-                  this.error = 'Invalid OTP';
+                  error = 'Invalid OTP';
                   notifyListeners();
                   print(e.toString());
                   Navigator.of(context).pop();

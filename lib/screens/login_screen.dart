@@ -3,6 +3,7 @@ import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
+  static const String id = 'login-screen';
   const LoginScreen({super.key});
 
   @override

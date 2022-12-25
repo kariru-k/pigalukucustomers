@@ -3,6 +3,7 @@ import 'package:piga_luku_customers/screens/login_screen.dart';
 import 'package:piga_luku_customers/screens/onboard_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
+  static const String id = 'welcome-screen';
   const WelcomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -46,10 +47,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginScreen()));
+                        Navigator.pushReplacementNamed(context, LoginScreen.id);
                     },
                     child: RichText(
                       text: const TextSpan(

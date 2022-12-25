@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/constants.dart';
 
 class OnBoardScreen extends StatefulWidget {
+  static const String id = 'onboarding-screen';
   const OnBoardScreen({Key? key}) : super(key: key);
 
   @override

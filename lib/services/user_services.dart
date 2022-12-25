@@ -3,7 +3,7 @@ import 'package:piga_luku_customers/models/user_model.dart';
 
 class UserServices{
   String collection = 'users';
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 
   //Create new User
