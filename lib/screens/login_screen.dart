@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
+import 'package:piga_luku_customers/providers/location_provider.dart';
+import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,9 +20,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
 
     final auth = Provider.of<AuthProvider>(context);
-
     bool validPhoneNumber = false;
     final phoneNumberController = TextEditingController();
+    final locationData = Provider.of<LocationProvider>(context);
 
     return Scaffold(
         body: StatefulBuilder(
@@ -143,17 +145,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                         absorbing: validPhoneNumber ? false:true,
                                         child: ElevatedButton(
                                           onPressed: () {
+                                            setState(() {
+                                              auth.loading = true;
+                                            });
                                             String number = '+254${phoneNumberController.text}';
-                                              auth.verifyPhone(context, number).then((value){
+                                              auth.verifyPhone(
+                                                context: context,
+                                                number: number,
+                                              ).then((value){
                                                 phoneNumberController.clear();
+                                                setState(() {
+                                                  auth.loading = false;
+                                                });
                                               });
                                           },
                                           style: ButtonStyle(
                                               backgroundColor: validPhoneNumber ? MaterialStateProperty.all(Theme.of(context).primaryColor) : MaterialStateProperty.all(Colors.grey)
                                           ),
-                                          child: Text(
-                                              validPhoneNumber ? 'CONTINUE' : 'ENTER PHONE NUMBER'
-                                          ),
+                                          child: auth.loading ? const CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                          ) : Text(validPhoneNumber ? 'CONTINUE' : 'ENTER PHONE NUMBER'),
                                         ),
                                       ),
                                     )

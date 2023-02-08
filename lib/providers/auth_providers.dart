@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:piga_luku_customers/services/user_services.dart';
+import 'package:provider/provider.dart';
+
+import 'location_provider.dart';
 
 class AuthProvider with ChangeNotifier{
 
@@ -10,15 +14,25 @@ class AuthProvider with ChangeNotifier{
   late String verificationId;
   late String error = '';
   final UserServices _userServices = UserServices();
+  bool loading = false;
+  LocationProvider? locationProvider = LocationProvider();
 
-  Future<void>verifyPhone(BuildContext context, String number)async{
+
+  Future<void>verifyPhone({required BuildContext context, required String number})async{
+    loading = true;
+    notifyListeners();
 
     verificationCompleted(PhoneAuthCredential credential) async{
+      loading = false;
+      notifyListeners();
       await _auth.signInWithCredential(credential);
     }
 
     verificationFailed(FirebaseAuthException e){
+      loading = false;
       print(e.code);
+      error = e.toString();
+      notifyListeners();
     }
 
     smsOtpSend(String verID, int? resendToken){
@@ -43,6 +57,8 @@ class AuthProvider with ChangeNotifier{
       
     } catch(e){
       print(e);
+      error = e.toString();
+      notifyListeners();
     }
   }
 
@@ -86,7 +102,19 @@ class AuthProvider with ChangeNotifier{
                   final User? user = (await _auth.signInWithCredential(phoneAuthCredential)).user;
 
                   //Add user data in firebase after registration
-                  _createUser(id: user!.uid, number: user.phoneNumber.toString());
+                  if (locationProvider?.selectedAddress != null) {
+                    print(locationProvider?.selectedAddress);
+                    updateUser(
+                        id: user?.uid,
+                        number: user?.phoneNumber.toString(),
+                        latitude: locationProvider?.latitude,
+                        longitude: locationProvider?.longitude,
+                        address: '${locationProvider?.selectedAddress.name}, ${locationProvider?.selectedAddress.street}, ${locationProvider?.selectedAddress.locality}, ${locationProvider?.selectedAddress.administrativeArea}'
+                    );
+                  }  else {
+                    _createUser(id: user!.uid, number: user.phoneNumber.toString());
+                  }
+
 
                   //navigate to Home Page Afterwards if fine
                   if(user!=null){
@@ -111,10 +139,21 @@ class AuthProvider with ChangeNotifier{
     );
   }
 
-  void _createUser({required String id, required String number}){
+  void _createUser({required String id, required String number,double? latitude, double? longitude, String? address}){
     _userServices.createUserData({
       'id': id,
-      'number': number
+      'number': number,
+      'location': GeoPoint(latitude!.toDouble(), longitude!.toDouble()),
+      'address': address
+    });
+  }
+
+  void updateUser({required String? id, required String? number, required double? latitude, required double? longitude, required String address}){
+    _userServices.updateUserData({
+      'id': id,
+      'number': number,
+      'location': GeoPoint(latitude!.toDouble(), longitude!.toDouble()),
+      'address': address,
     });
   }
 }

@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/firebase_options.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
+import 'package:piga_luku_customers/providers/location_provider.dart';
 import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:piga_luku_customers/screens/login_screen.dart';
+import 'package:piga_luku_customers/screens/map_screen.dart';
 import 'package:piga_luku_customers/screens/onboard_screen.dart';
 import 'package:piga_luku_customers/screens/register_screen.dart';
 import 'package:piga_luku_customers/screens/splash_screen.dart';
@@ -19,6 +21,9 @@ void main() async{
       providers: [
         ChangeNotifierProvider(
           create: (_)=>AuthProvider(),
+        ),
+        ChangeNotifierProvider(
+            create: (_)=> LocationProvider()
         )
       ],
     child: const MyApp(),
@@ -42,7 +47,8 @@ class MyApp extends StatelessWidget {
         LoginScreen.id:(context)=>const LoginScreen(),
         SplashScreen.id:(context)=> const SplashScreen(),
         RegisterScreen.id:(context)=> const RegisterScreen(),
-        OnBoardScreen.id:(context)=> const OnBoardScreen()
+        OnBoardScreen.id:(context)=> const OnBoardScreen(),
+        MapScreen.id:(context)=> const MapScreen()
       },
     );
   }
