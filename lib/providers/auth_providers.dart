@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/screens/home_screen.dart';
+import 'package:piga_luku_customers/screens/map_screen.dart';
 import 'package:piga_luku_customers/services/user_services.dart';
-import 'package:provider/provider.dart';
 
 import 'location_provider.dart';
 
@@ -16,6 +16,7 @@ class AuthProvider with ChangeNotifier{
   final UserServices _userServices = UserServices();
   bool loading = false;
   LocationProvider? locationProvider = LocationProvider();
+  late String screen;
 
 
   Future<void>verifyPhone({required BuildContext context, required String number})async{
@@ -58,6 +59,7 @@ class AuthProvider with ChangeNotifier{
     } catch(e){
       print(e);
       error = e.toString();
+      loading = false;
       notifyListeners();
     }
   }
@@ -101,29 +103,32 @@ class AuthProvider with ChangeNotifier{
 
                   final User? user = (await _auth.signInWithCredential(phoneAuthCredential)).user;
 
-                  //Add user data in firebase after registration
-                  if (locationProvider?.selectedAddress != null) {
-                    print(locationProvider?.selectedAddress);
-                    updateUser(
-                        id: user?.uid,
-                        number: user?.phoneNumber.toString(),
-                        latitude: locationProvider?.latitude,
-                        longitude: locationProvider?.longitude,
-                        address: '${locationProvider?.selectedAddress.name}, ${locationProvider?.selectedAddress.street}, ${locationProvider?.selectedAddress.locality}, ${locationProvider?.selectedAddress.administrativeArea}'
-                    );
-                  }  else {
-                    _createUser(id: user!.uid, number: user.phoneNumber.toString());
+                  
+                  if(user != null){
+                    loading = false;
+                    notifyListeners();
+
+
+                    _userServices.getUserById(user.uid).then((snapshot) => {
+                      if(snapshot.exists){
+                        if(this.screen == 'Login'){
+                          //Since it's login, no new data thus no need to update
+                          Navigator.pushReplacementNamed(context, HomeScreen.id)
+                        }else {
+                          Navigator.pushReplacementNamed(context, MapScreen.id)
+                        }
+                      }else {
+                        //The user data does not exist s we need to create new data
+                        _createUser(id: user.uid, number: user.phoneNumber.toString()),
+                        Navigator.pushReplacementNamed(context, HomeScreen.id)
+                      }
+                    });
+                  } else {
+                    print("Login failed");
                   }
 
 
-                  //navigate to Home Page Afterwards if fine
-                  if(user!=null){
-                    Navigator.of(context).pop();
-                    //Go to the home screen
-                    Navigator.pushReplacementNamed(context, HomeScreen.id);
-                  }else {
-                    print('Login Failed');
-                  }
+
                 }catch(e){
                   error = 'Invalid OTP';
                   notifyListeners();
@@ -135,25 +140,38 @@ class AuthProvider with ChangeNotifier{
           )
         ],
       );
-    }
-    );
+    }).whenComplete((){
+      loading = false;
+      notifyListeners();
+    });
   }
 
-  void _createUser({required String id, required String number,double? latitude, double? longitude, String? address}){
+  void _createUser({required String id, required String number}){
     _userServices.createUserData({
       'id': id,
       'number': number,
-      'location': GeoPoint(latitude!.toDouble(), longitude!.toDouble()),
-      'address': address
+      'location': GeoPoint(locationProvider!.latitude, locationProvider!.longitude),
+      'address': locationProvider!.selectedAddress
     });
+    loading = false;
+    notifyListeners();
   }
 
-  void updateUser({required String? id, required String? number, required double? latitude, required double? longitude, required String address}){
-    _userServices.updateUserData({
-      'id': id,
-      'number': number,
-      'location': GeoPoint(latitude!.toDouble(), longitude!.toDouble()),
-      'address': address,
-    });
+  Future<bool> updateUser({required String? id, required String? number, required double? latitude, required double? longitude, required String address}) async{
+    try{
+      _userServices.updateUserData({
+        'id': id,
+        'number': number,
+        'location': GeoPoint(latitude!.toDouble(), longitude!.toDouble()),
+        'address': address,
+      });
+
+      loading = false;
+      notifyListeners();
+      return true;
+    } catch(e){
+      print("Error $e");
+      return false;
+    }
   }
 }

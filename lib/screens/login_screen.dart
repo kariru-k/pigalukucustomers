@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
-import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,6 +22,12 @@ class _LoginScreenState extends State<LoginScreen> {
     bool validPhoneNumber = false;
     final phoneNumberController = TextEditingController();
     final locationData = Provider.of<LocationProvider>(context);
+
+
+    setState(() {
+      auth.screen = 'Login';
+    });
+
 
     return Scaffold(
         body: StatefulBuilder(
@@ -145,8 +150,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                         absorbing: validPhoneNumber ? false:true,
                                         child: ElevatedButton(
                                           onPressed: () {
+                                            print(locationData.longitude);
                                             setState(() {
                                               auth.loading = true;
+                                              auth.screen = "MapScreen";
                                             });
                                             String number = '+254${phoneNumberController.text}';
                                               auth.verifyPhone(
@@ -162,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           style: ButtonStyle(
                                               backgroundColor: validPhoneNumber ? MaterialStateProperty.all(Theme.of(context).primaryColor) : MaterialStateProperty.all(Colors.grey)
                                           ),
-                                          child: auth.loading ? const CircularProgressIndicator(
+                                          child: auth.loading  ? const CircularProgressIndicator(
                                             valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                           ) : Text(validPhoneNumber ? 'CONTINUE' : 'ENTER PHONE NUMBER'),
                                         ),

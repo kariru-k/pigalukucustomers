@@ -24,12 +24,6 @@ class _MapScreenState extends State<MapScreen> {
   bool _loggedIn = false;
   late User? user;
 
-  @override
-  void initState() {
-    // Check if user is logged in whle opening map screen
-    getCurrentUser();
-    super.initState();
-  }
 
   void getCurrentUser(){
     setState(() {
@@ -37,6 +31,14 @@ class _MapScreenState extends State<MapScreen> {
       user = FirebaseAuth.instance.currentUser;
     });
   }
+
+  @override
+  void initState() {
+    // Check if user is logged in whle opening map screen
+    getCurrentUser();
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -191,8 +193,13 @@ class _MapScreenState extends State<MapScreen> {
                                               latitude: locationData.latitude,
                                               longitude: locationData.longitude,
                                               address: '${locationData.selectedAddress.name}, ${locationData.selectedAddress.street}, ${locationData.selectedAddress.locality}, ${locationData.selectedAddress.administrativeArea}'
-                                          );
-                                          Navigator.pushNamed(context, HomeScreen.id);
+                                          ).then((value){
+                                            if (value == true) {
+                                              Navigator.pushNamed(context, HomeScreen.id);
+                                            } else {
+                                              
+                                            }
+                                          });
                                         }
                                       },
                                       style: ButtonStyle(

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:piga_luku_customers/models/user_model.dart';
 
 class UserServices{
   String collection = 'users';
@@ -20,14 +19,10 @@ class UserServices{
 
   //Get data by user Id
 
-  Future<void>getUserById(String id) async {
-    await _firestore.collection(collection).doc(id).get()
-        .then((doc){
-          if(doc.data()== null){
-            return null;
-          }
+  Future<DocumentSnapshot>getUserById(String id) async {
 
-          return UserModel.fromSnapshot(doc);
-    });
+    var result = await _firestore.collection(collection).doc(id).get();
+
+    return result;
+    }
   }
-}

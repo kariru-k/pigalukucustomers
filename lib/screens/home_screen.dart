@@ -12,6 +12,60 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        elevation: 0.0,
+        leading: Container(),
+        centerTitle: true,
+        title: TextButton(
+          onPressed: () {},
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Delivery Address",
+                style: TextStyle(
+                  color: Colors.white
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit_outlined),
+                color: Colors.white,
+                onPressed: () {},
+              )
+            ],
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: IconButton(
+              icon: const Icon(Icons.account_circle_outlined),
+              onPressed: (){},
+              alignment: Alignment.topLeft,
+            ),
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50.0),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none
+                  ),
+                  contentPadding: EdgeInsets.zero,
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: "Search for your location",
+                  prefixIcon: const Icon(Icons.search_sharp, color: Colors.black,)
+              ),
+            ),
+          ),
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
