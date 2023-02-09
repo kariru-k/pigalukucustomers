@@ -69,8 +69,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         });
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurpleAccent),
+                    style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
                     child: locationData.loading ? Row(
                       mainAxisSize: MainAxisSize.min,
                       children: const [
@@ -90,15 +89,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         Navigator.pushReplacementNamed(context, LoginScreen.id);
                     },
                     child: RichText(
-                      text: const TextSpan(
+                      text: TextSpan(
                           text: "Already a Customer? ",
-                          style: TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.black),
                           children: [
                             TextSpan(
                                 text: 'Log In',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black))
+                                    color: Colors.primaries.first
+                                ))
                           ]),
                     ),
                   )

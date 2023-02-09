@@ -37,3 +37,15 @@ flutter:
   assets:
     - images/
 
+  fonts:
+    - family: Lato
+      fonts:
+      - asset: fonts/Lato-Bold.ttf
+        weight: 700
+      - asset: fonts/Lato-Regular.ttf
+
+    - family: Anton
+      fonts:
+        - asset: fonts/Anton-Regular.ttf
+
+
