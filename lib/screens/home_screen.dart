@@ -1,16 +1,43 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
+import 'package:piga_luku_customers/providers/location_provider.dart';
+import 'package:piga_luku_customers/screens/map_screen.dart';
 import 'package:piga_luku_customers/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   static const String id = 'home-screen';
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  String _location = "";
+
+  @override
+  void initState() {
+    getPrefs();
+    super.initState();
+  }
+
+  getPrefs() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? location = preferences.getString('address');
+    setState(() {
+      _location = location!;
+    });
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
+    final locationData = Provider.of<LocationProvider>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -18,14 +45,24 @@ class HomeScreen extends StatelessWidget {
         leading: Container(),
         centerTitle: true,
         title: TextButton(
-          onPressed: () {},
+          onPressed: () {
+            locationData.getCurrentPosition();
+            if(locationData.permissionAllowed == true){
+              Navigator.pushNamed(context, MapScreen.id);
+            } else {
+              print("Permission denied");
+            }
+          },
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                "Delivery Address",
-                style: TextStyle(
-                  color: Colors.white
+              Expanded(
+                child: Text(
+                  _location,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white
+                  ),
                 ),
               ),
               IconButton(

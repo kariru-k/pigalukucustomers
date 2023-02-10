@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationProvider with ChangeNotifier{
 
@@ -54,5 +55,15 @@ class LocationProvider with ChangeNotifier{
     final addresses = await placemarkFromCoordinates(latitude, longitude);
     selectedAddress = addresses.first;
     print('${selectedAddress.locality}');
+    notifyListeners();
+  }
+
+  Future<void>savePreferences(double latitude,double longitude,Placemark address) async {
+    print(address.administrativeArea);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setDouble("latitude", latitude);
+    preferences.setDouble("longitude", longitude);
+    preferences.setString("address", "${address.name}, ${address.street}, ${address.administrativeArea}");
+
   }
 }

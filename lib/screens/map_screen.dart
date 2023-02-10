@@ -196,6 +196,7 @@ class _MapScreenState extends State<MapScreen> {
                                           ).then((value){
                                             if (value == true) {
                                               Navigator.pushNamed(context, HomeScreen.id);
+                                              locationData.savePreferences(locationData.longitude, locationData.latitude, locationData.selectedAddress);
                                             } else {
                                               
                                             }
