@@ -63,7 +63,9 @@ class LocationProvider with ChangeNotifier{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setDouble("latitude", latitude);
     preferences.setDouble("longitude", longitude);
-    preferences.setString("address", "${address.name}, ${address.street}, ${address.administrativeArea}");
+    preferences.setString("address", "${address.name}");
+    preferences.setString("street", "${address.street}");
+    preferences.setString("locality", "${address.locality}");
 
   }
 }

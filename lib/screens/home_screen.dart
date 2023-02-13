@@ -4,6 +4,7 @@ import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
 import 'package:piga_luku_customers/screens/map_screen.dart';
 import 'package:piga_luku_customers/screens/welcome_screen.dart';
+import 'package:piga_luku_customers/widgets/image_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,6 +19,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   String _location = "";
+  String _street = "";
+  String _locality = "";
 
   @override
   void initState() {
@@ -28,8 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
   getPrefs() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? location = preferences.getString('address');
+    String? street = preferences.getString("street");
+    String? locality = preferences.getString("locality");
     setState(() {
       _location = location!;
+      _street = street!;
+      _locality = locality!;
     });
   }
 
@@ -40,36 +47,62 @@ class _HomeScreenState extends State<HomeScreen> {
     final locationData = Provider.of<LocationProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: true,
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0.0,
-        leading: Container(),
         centerTitle: true,
+        leading: Icon(Icons.ice_skating),
         title: TextButton(
-          onPressed: () {
-            locationData.getCurrentPosition();
-            if(locationData.permissionAllowed == true){
-              Navigator.pushNamed(context, MapScreen.id);
-            } else {
-              print("Permission denied");
-            }
-          },
-          child: Row(
+          onPressed: () {},
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Text(
-                  _location,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _location,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        Text(
+                          _street,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.white
+                          ),
+                        ),
+                        Text(
+                          _locality,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              color: Colors.white
+                          ),
+                        ),
+                      ],
+                    )
                   ),
-                ),
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined, size: 18,),
+                    color: Colors.white,
+                    onPressed: () {
+                      locationData.getCurrentPosition();
+                      if(locationData.permissionAllowed == true){
+                        Navigator.pushNamed(context, MapScreen.id);
+                      } else {
+                        print("Permission denied");
+                      }
+                    },
+                  )
+                ],
               ),
-              IconButton(
-                icon: const Icon(Icons.edit_outlined),
-                color: Colors.white,
-                onPressed: () {},
-              )
             ],
           ),
         ),
@@ -84,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(50.0),
+          preferredSize: const Size.fromHeight(75.0),
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: TextField(
@@ -103,33 +136,34 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton(
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 8.0),
+            child: ImageSlider(),
+          ),
+          ElevatedButton(
+            onPressed: (){
+              auth.error = '';
+              FirebaseAuth.instance.signOut().then((value) => {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context)=>const WelcomeScreen()
+                ))
+              });
+            },
+            child: const Text(
+              'Sign Out'
+            )
+        ),
+          ElevatedButton(
               onPressed: (){
-                auth.error = '';
-                FirebaseAuth.instance.signOut().then((value) => {
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (context)=>const WelcomeScreen()
-                  ))
-                });
+                Navigator.pushReplacementNamed(context, WelcomeScreen.id);
               },
               child: const Text(
-                'Sign Out'
+                  'Go To Home Screen'
               )
           ),
-            ElevatedButton(
-                onPressed: (){
-                  Navigator.pushReplacementNamed(context, WelcomeScreen.id);
-                },
-                child: const Text(
-                    'Go To Home Screen'
-                )
-            ),
-        ]),
-      ),
+      ]),
     );
   }
 }
