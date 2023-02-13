@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Image.asset('images/pigaluku_logo.png'),
               const SizedBox(height: 20,),
               const Text(
-                'Clothing Store',
+                'PIGA LUKU',
                 style: kPageViewTextStyle,
               )
             ],
