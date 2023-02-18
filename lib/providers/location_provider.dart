@@ -7,13 +7,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationProvider with ChangeNotifier{
 
-  late double latitude = 0.0;
-  late double longitude = 100.0;
+  double? latitude;
+  double? longitude;
   bool permissionAllowed = false;
   late LocationPermission? permission;
   late bool serviceEnabled;
-  late Placemark selectedAddress = Placemark();
-  late bool loading = false;
+  Placemark? selectedAddress = Placemark();
+  bool loading = false;
 
   //Get current position
   Future<void> getCurrentPosition() async{
@@ -40,7 +40,7 @@ class LocationProvider with ChangeNotifier{
       longitude = position.longitude;
       permissionAllowed = true;
 
-      final addresses = await placemarkFromCoordinates(latitude, longitude);
+      final addresses = await placemarkFromCoordinates(latitude!, longitude!);
       selectedAddress = addresses.first;
       notifyListeners();
   }
@@ -52,17 +52,17 @@ class LocationProvider with ChangeNotifier{
   }
 
   getMoveCamera() async{
-    final addresses = await placemarkFromCoordinates(latitude, longitude);
+    final addresses = await placemarkFromCoordinates(latitude!, longitude!);
     selectedAddress = addresses.first;
-    print('${selectedAddress.locality}');
+    print('${selectedAddress?.locality}');
     notifyListeners();
   }
 
-  Future<void>savePreferences(double latitude,double longitude,Placemark address) async {
-    print(address.administrativeArea);
+  Future<void>savePreferences(double? latitude,double? longitude,Placemark? address) async {
+    print(address!.administrativeArea);
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setDouble("latitude", latitude);
-    preferences.setDouble("longitude", longitude);
+    preferences.setDouble("latitude", latitude!);
+    preferences.setDouble("longitude", longitude!);
     preferences.setString("address", "${address.name}");
     preferences.setString("street", "${address.street}");
     preferences.setString("locality", "${address.locality}");

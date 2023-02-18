@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   keyboardType: TextInputType.phone,
                                 ),
                                 Visibility(
-                                  visible: auth.error=='Invalid OTP'? true: false,
+                                  visible: auth.error == null ? true: false,
                                   child: Column(
                                     children: [
                                       Text(
@@ -150,6 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         absorbing: validPhoneNumber ? false:true,
                                         child: ElevatedButton(
                                           onPressed: () {
+                                            locationData.getCurrentPosition();
                                             print(locationData.longitude);
                                             setState(() {
                                               auth.loading = true;

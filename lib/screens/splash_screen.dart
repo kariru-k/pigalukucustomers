@@ -29,6 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
         if(user==null){
           Navigator.popAndPushNamed(context, WelcomeScreen.id);
         }else{
+          print(user.uid);
           Navigator.popAndPushNamed(context, HomeScreen.id);
         }
       });

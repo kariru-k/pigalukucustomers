@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:piga_luku_customers/screens/map_screen.dart';
 import 'package:piga_luku_customers/services/user_services.dart';
+import 'package:provider/provider.dart';
 
 import 'location_provider.dart';
 
@@ -12,10 +13,10 @@ class AuthProvider with ChangeNotifier{
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late String smsOtp;
   late String verificationId;
-  late String error = '';
+  String? error;
   final UserServices _userServices = UserServices();
   bool loading = false;
-  LocationProvider? locationProvider = LocationProvider();
+  final locationProvider = LocationProvider();
   late String screen;
 
 
@@ -23,11 +24,7 @@ class AuthProvider with ChangeNotifier{
     loading = true;
     notifyListeners();
 
-    verificationCompleted(PhoneAuthCredential credential) async{
-      loading = false;
-      notifyListeners();
-      await _auth.signInWithCredential(credential);
-    }
+
 
     verificationFailed(FirebaseAuthException e){
       loading = false;
@@ -47,7 +44,7 @@ class AuthProvider with ChangeNotifier{
     try{
       _auth.verifyPhoneNumber(
           phoneNumber: number,
-          verificationCompleted: verificationCompleted,
+          verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {},
           verificationFailed: verificationFailed,
           codeSent: smsOtpSend,
           codeAutoRetrievalTimeout: (String verId){
@@ -103,7 +100,8 @@ class AuthProvider with ChangeNotifier{
 
                   final User? user = (await _auth.signInWithCredential(phoneAuthCredential)).user;
 
-                  
+                  final LocationProvider locationData = Provider.of<LocationProvider>(context, listen: false);
+
                   if(user != null){
                     loading = false;
                     notifyListeners();
@@ -111,7 +109,7 @@ class AuthProvider with ChangeNotifier{
 
                     _userServices.getUserById(user.uid).then((snapshot) => {
                       if(snapshot.exists){
-                        if(this.screen == 'Login'){
+                        if(screen == 'Login'){
                           //Since it's login, no new data thus no need to update
                           Navigator.pushReplacementNamed(context, HomeScreen.id)
                         }else {
@@ -119,7 +117,14 @@ class AuthProvider with ChangeNotifier{
                         }
                       }else {
                         //The user data does not exist s we need to create new data
-                        _createUser(id: user.uid, number: user.phoneNumber.toString()),
+                        locationData.getCurrentPosition(),
+                        _createUser(
+                          id: user.uid,
+                          number: user.phoneNumber.toString(),
+                          location: GeoPoint(locationData.latitude as double, locationData.longitude as double),
+                          address: locationData.selectedAddress!.name,
+                        ),
+                        locationData.savePreferences(locationData.latitude as double, locationData.longitude as double, locationData.selectedAddress),
                         Navigator.pushReplacementNamed(context, HomeScreen.id)
                       }
                     });
@@ -130,7 +135,7 @@ class AuthProvider with ChangeNotifier{
 
 
                 }catch(e){
-                  error = 'Invalid OTP';
+                  error = e.toString();
                   notifyListeners();
                   print(e.toString());
                   Navigator.of(context).pop();
@@ -146,12 +151,13 @@ class AuthProvider with ChangeNotifier{
     });
   }
 
-  void _createUser({required String id, required String number}){
+  void _createUser({required String id, required String number, required GeoPoint location, required String? address}){
+    locationProvider.getCurrentPosition();
     _userServices.createUserData({
       'id': id,
       'number': number,
-      'location': GeoPoint(locationProvider!.latitude, locationProvider!.longitude),
-      'address': locationProvider!.selectedAddress
+      'location': location,
+      'address': address
     });
     loading = false;
     notifyListeners();

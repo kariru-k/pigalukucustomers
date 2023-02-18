@@ -49,7 +49,7 @@ class _MapScreenState extends State<MapScreen> {
 
 
     setState(() {
-      currentLocation = LatLng(locationData.latitude, locationData.longitude);
+      currentLocation = LatLng(locationData.latitude as double, locationData.longitude as double);
     });
 
     void onCreated(GoogleMapController controller) {
@@ -126,7 +126,7 @@ class _MapScreenState extends State<MapScreen> {
                                     ),
                                     label: Text(
                                       _locating ? 'Locating...' :
-                                      locationData.selectedAddress.name.toString(),
+                                      locationData.selectedAddress!.name.toString(),
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -141,7 +141,7 @@ class _MapScreenState extends State<MapScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      _locating ? '': locationData.selectedAddress.street.toString(),
+                                      _locating ? '': locationData.selectedAddress!.street.toString(),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold
                                       ),
@@ -154,7 +154,7 @@ class _MapScreenState extends State<MapScreen> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      _locating ? '': locationData.selectedAddress.locality.toString(),
+                                      _locating ? '': locationData.selectedAddress!.locality.toString(),
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold
                                       ),
@@ -170,7 +170,7 @@ class _MapScreenState extends State<MapScreen> {
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold
                                         ),
-                                        _locating ? '': locationData.selectedAddress.administrativeArea.toString()
+                                        _locating ? '': locationData.selectedAddress!.administrativeArea.toString()
                                     ),
                                   ],
                                 ),
@@ -192,7 +192,7 @@ class _MapScreenState extends State<MapScreen> {
                                               number: user?.phoneNumber.toString(),
                                               latitude: locationData.latitude,
                                               longitude: locationData.longitude,
-                                              address: '${locationData.selectedAddress.name}, ${locationData.selectedAddress.street}, ${locationData.selectedAddress.locality}, ${locationData.selectedAddress.administrativeArea}'
+                                              address: '${locationData.selectedAddress!.name}, ${locationData.selectedAddress!.street}, ${locationData.selectedAddress!.locality}, ${locationData.selectedAddress!.administrativeArea}'
                                           ).then((value){
                                             if (value == true) {
                                               Navigator.pushNamed(context, HomeScreen.id);
