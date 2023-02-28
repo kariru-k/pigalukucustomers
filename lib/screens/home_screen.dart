@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
 import 'package:piga_luku_customers/screens/map_screen.dart';
+import 'package:piga_luku_customers/screens/top_pick_store.dart';
 import 'package:piga_luku_customers/screens/welcome_screen.dart';
 import 'package:piga_luku_customers/widgets/image_slider.dart';
 import 'package:provider/provider.dart';
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0.0,
         centerTitle: true,
-        leading: Icon(Icons.ice_skating),
+        leading: const Icon(Icons.menu),
         title: TextButton(
           onPressed: () {},
           child: Column(
@@ -110,6 +111,17 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: IconButton(
+              icon: const Icon(Icons.power_settings_new_sharp),
+              onPressed: (){
+                FirebaseAuth.instance.signOut();
+                Navigator.pushReplacementNamed(context, WelcomeScreen.id);
+              },
+              alignment: Alignment.topLeft,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: IconButton(
               icon: const Icon(Icons.account_circle_outlined),
               onPressed: (){},
               alignment: Alignment.topLeft,
@@ -136,34 +148,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0),
-            child: ImageSlider(),
-          ),
-          ElevatedButton(
-            onPressed: (){
-              auth.error = '';
-              FirebaseAuth.instance.signOut().then((value) => {
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context)=>const WelcomeScreen()
-                ))
-              });
-            },
-            child: const Text(
-              'Sign Out'
-            )
-        ),
-          ElevatedButton(
-              onPressed: (){
-                Navigator.pushReplacementNamed(context, WelcomeScreen.id);
-              },
-              child: const Text(
-                  'Go To Home Screen'
-              )
-          ),
-      ]),
+      body: SingleChildScrollView(
+        child: Column(
+          children: const [
+            Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: ImageSlider(),
+            ),
+            SizedBox(height: 300 ,child: TopPickStore())
+        ]),
+      ),
     );
   }
 }

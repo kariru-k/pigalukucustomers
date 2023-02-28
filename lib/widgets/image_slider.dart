@@ -25,9 +25,11 @@ class _ImageSliderState extends State<ImageSlider> {
   Future getImagesFromDb() async{
     var _firestore = FirebaseFirestore.instance;
     QuerySnapshot snapshot = await _firestore.collection("slider").get();
-    setState(() {
-      datalength = snapshot.docs.length;
-    });
+    if (mounted) {
+      setState(() {
+        datalength = snapshot.docs.length;
+      });
+    }
 
     return snapshot.docs;
   }
@@ -41,20 +43,28 @@ class _ImageSliderState extends State<ImageSlider> {
         FutureBuilder(
           future: getImagesFromDb(),
           builder: (_, snapShot){
-            return snapShot.data == null ? const Center(child: CircularProgressIndicator(),) : CarouselSlider.builder(
-              itemCount: snapShot.data.length,
-              itemBuilder: (context, int index, int pageViewIndex){
-                DocumentSnapshot sliderImage = snapShot.data[index];
-                Map? getImage = sliderImage.data() as Map?;
-                return Image.network(getImage!['image'], fit: BoxFit.fill, width: 640, height: 320,);
-              },
-              options: CarouselOptions(
-                autoPlay: true,
-                onPageChanged: (int i, carouselchangeReason){
-                  setState(() {
-                    index = i;
-                  });
-                }
+            return snapShot.data == null ? const Center(child: CircularProgressIndicator(),) : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CarouselSlider.builder(
+                itemCount: snapShot.data.length,
+                itemBuilder: (context, int index, int pageViewIndex){
+                  DocumentSnapshot sliderImage = snapShot.data[index];
+                  Map? getImage = sliderImage.data() as Map?;
+                  return SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Image.network(getImage!['image'], fit: BoxFit.fill, width: 640, height: 320,)
+                  );
+                },
+                options: CarouselOptions(
+                  initialPage: 0,
+                  viewportFraction: 1,
+                  autoPlay: true,
+                  onPageChanged: (int i, carouselchangeReason){
+                    setState(() {
+                      index = i;
+                    });
+                  }
+                ),
               ),
             );
           },

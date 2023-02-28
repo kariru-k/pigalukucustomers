@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   keyboardType: TextInputType.phone,
                                 ),
                                 Visibility(
-                                  visible: auth.error == null ? true: false,
+                                  visible: auth.error == null ? false: true,
                                   child: Column(
                                     children: [
                                       Text(
