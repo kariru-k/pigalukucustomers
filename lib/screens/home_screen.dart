@@ -150,12 +150,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
             Padding(
               padding: EdgeInsets.only(top: 8.0),
               child: ImageSlider(),
             ),
-            SizedBox(height: 300 ,child: TopPickStore())
+            SizedBox(
+                height: 300,
+                child: TopPickStore())
         ]),
       ),
     );

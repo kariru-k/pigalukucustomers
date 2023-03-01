@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart' as loc;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationProvider with ChangeNotifier{
@@ -14,12 +15,19 @@ class LocationProvider with ChangeNotifier{
   late bool serviceEnabled;
   Placemark? selectedAddress = Placemark();
   bool loading = false;
+  loc.Location location = loc.Location();
+
 
   //Get current position
   Future<void> getCurrentPosition() async{
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return Future.error('Location services are disabled');
+      bool isturnedon = await location.requestService();
+      if (isturnedon) {
+        print("GPS device is turned ON");
+      }else{
+        print("GPS Device is still OFF");
+      }
     }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {

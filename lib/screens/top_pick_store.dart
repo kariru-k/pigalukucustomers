@@ -28,8 +28,6 @@ class _TopPickStoreState extends State<TopPickStore> {
           GeoPoint? userLocation = result['location'];
           _userLatitude = userLocation!.latitude;
           _userLongitude = userLocation.longitude;
-          print(_userLatitude);
-          print(_userLongitude);
         });
       } else {
         Navigator.pushReplacementNamed(context, WelcomeScreen.id);
@@ -39,8 +37,6 @@ class _TopPickStoreState extends State<TopPickStore> {
   }
 
   String getDistance(location){
-    print(_userLatitude);
-    print(_userLongitude);
     var distance = Geolocator.distanceBetween(_userLatitude!, _userLongitude!, location.latitude, location.longitude);
     return (distance / 1000).toStringAsFixed(2);
   }
@@ -49,68 +45,87 @@ class _TopPickStoreState extends State<TopPickStore> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: StreamBuilder<QuerySnapshot>(
-        stream: _storeServices.getTopPickedStore(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
-          if(!snapshot.hasData) return const CircularProgressIndicator();
+    return StreamBuilder<QuerySnapshot>(
+      stream: _storeServices.getTopPickedStore(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
+        if(!snapshot.hasData) return const CircularProgressIndicator();
 
-          return Column(
-            children: [
-              Flexible(
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: snapshot.data!.docs.map((DocumentSnapshot document){
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SizedBox(
-                        width: 80,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: Card(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    child: Image.network(
-                                      document['url'],
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                              ),
-                            ),
-                            Container(
-                              height: 35,
-                              child: Text(
-                                document['shopName'],
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Text(
-                              "${getDistance(document["location"])}km",
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 10
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
+        return Column(
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: SizedBox(
+                    height: 30,
+                      child: Image.asset("images/like.gif")
+                  ),
                 ),
-              )
-            ],
-          );
-        },
-      ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    "Top Picks For You",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18
+                    ),
+                  ),
+                )
+              ],
+            ),
+            Flexible(
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: snapshot.data!.docs.map((DocumentSnapshot document){
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SizedBox(
+                      width: 80,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: Card(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  child: Image.network(
+                                    document['url'],
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                            ),
+                          ),
+                          SizedBox(
+                            height: 35,
+                            child: Text(
+                              document['shopName'],
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            "${getDistance(document["location"])}km",
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 10
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 }
