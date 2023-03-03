@@ -76,4 +76,6 @@ class LocationProvider with ChangeNotifier{
     preferences.setString("locality", "${address.locality}");
 
   }
+
+
 }
