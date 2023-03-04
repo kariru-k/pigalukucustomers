@@ -57,53 +57,78 @@ class _TopPickStoreState extends State<TopPickStore> {
 
           return Column(
             children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: SizedBox(
+                        height: 30,
+                        child: Image.asset("images/like.gif")
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      "Top Picks For You",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18
+                      ),
+                    ),
+                  )
+                ],
+              ),
               Flexible(
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: snapshot.data!.docs.map((DocumentSnapshot document){
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: SizedBox(
-                        width: 80,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: Card(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                    child: Image.network(
-                                      document['url'],
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                              ),
-                            ),
-                            Container(
-                              height: 35,
-                              child: Text(
-                                document['shopName'],
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold
+                    if(double.parse(getDistance(document['location'])) <= 5){
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: SizedBox(
+                          width: 80,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 80,
+                                height: 80,
+                                child: Card(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(4.0),
+                                      child: Image.network(
+                                        document['url'],
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
                                 ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            Text(
-                              "${getDistance(document["location"])}km",
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 10
+                              Container(
+                                height: 35,
+                                child: Text(
+                                  document['shopName'],
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            )
-                          ],
+                              Text(
+                                "${getDistance(document["location"])}km",
+                                style: const TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 10
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      return Container();
+                    }
                   }).toList(),
                 ),
               )
