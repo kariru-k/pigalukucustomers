@@ -85,8 +85,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     height: 20,
                   ),
                   TextButton(
-                    onPressed: () {
-                        Navigator.pushReplacementNamed(context, LoginScreen.id);
+                    onPressed: () async{
+                      await locationData.getCurrentPosition();
+                      if(!locationData.serviceEnabled){
+                        print("No location enabled!");
+                      }
+                      if(locationData.permissionAllowed){
+                        locationData.getCurrentPosition().then((value){
+                          Navigator.pushReplacementNamed(context, LoginScreen.id);
+                        });
+                      }else {
+                        print('Permission has not been granted');
+                      }
                     },
                     child: RichText(
                       text: TextSpan(

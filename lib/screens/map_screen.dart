@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
@@ -18,11 +19,11 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
 
-  late LatLng currentLocation;
   late GoogleMapController _mapController;
   bool _locating = false;
   bool _loggedIn = false;
   late User? user;
+  late Position position;
 
 
   void getCurrentUser(){
@@ -44,11 +45,20 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     final LocationProvider locationData = Provider.of<LocationProvider>(context);
     final _auth = Provider.of<AuthProvider>(context);
+    double? latitude;
+    double? longitude;
+    late LatLng currentLocation;
 
 
+    // setState(() {
+    //   locationData.getCurrentPosition();
+    //   latitude = locationData.latitude;
+    //   longitude = locationData.longitude;
+    // });
 
 
     setState(() {
+      locationData.getCurrentPosition();
       currentLocation = LatLng(locationData.latitude as double, locationData.longitude as double);
     });
 
