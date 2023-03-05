@@ -33,7 +33,7 @@ class _NearByStoreState extends State<NearByStores> {
     }
 
     return StreamBuilder<QuerySnapshot>(
-        stream: _storeServices.getTopPickedStore(),
+        stream: _storeServices.getNearbyStorePagination(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
           if(!snapshot.hasData) return const CircularProgressIndicator();
 
@@ -67,14 +67,7 @@ class _NearByStoreState extends State<NearByStores> {
                     _refreshedChangeListener.refreshed = true;
                     },
                   child: PaginateFirestore(
-                    query: FirebaseFirestore.instance
-                        .collection("vendors")
-                        .where("accVerified", isEqualTo: true)
-                        .where("isTopPicked", isEqualTo: true)
-                        .orderBy("shopName"),
-                    listeners: [
-                      _refreshedChangeListener,
-                    ],
+                    query: _storeServices.getNearbyStore(),
                     footer: SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 30.0),

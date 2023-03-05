@@ -11,4 +11,19 @@ class StoreServices{
         .orderBy("shopName")
         .snapshots();
   }
+
+  getNearbyStore(){
+    return FirebaseFirestore.instance
+        .collection("vendors")
+        .where("accVerified", isEqualTo: true)
+        .orderBy("shopName");
+  }
+
+  getNearbyStorePagination(){
+    return FirebaseFirestore.instance
+        .collection("vendors")
+        .where("accVerified", isEqualTo: true)
+        .orderBy("shopName")
+        .snapshots();
+  }
 }
