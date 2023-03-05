@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:piga_luku_customers/screens/map_screen.dart';
 import 'package:piga_luku_customers/services/user_services.dart';
 import 'package:provider/provider.dart';
 
+import '../screens/main_screen.dart';
 import 'location_provider.dart';
 
 class AuthProvider with ChangeNotifier{
@@ -111,7 +111,7 @@ class AuthProvider with ChangeNotifier{
                       if(snapshot.exists){
                         if(screen == 'Login'){
                           //Since it's login, no new data thus no need to update
-                          Navigator.pushReplacementNamed(context, HomeScreen.id)
+                          Navigator.pushReplacementNamed(context, MainScreen.id)
                         }else {
                           Navigator.pushReplacementNamed(context, MapScreen.id)
                         }
@@ -125,7 +125,7 @@ class AuthProvider with ChangeNotifier{
                           address: locationData.selectedAddress!.name,
                         ),
                         locationData.savePreferences(locationData.latitude as double, locationData.longitude as double, locationData.selectedAddress),
-                        Navigator.pushReplacementNamed(context, HomeScreen.id)
+                        Navigator.pushReplacementNamed(context, MainScreen.id)
                       }
                     });
                   } else {

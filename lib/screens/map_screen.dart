@@ -5,8 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
-import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:piga_luku_customers/screens/login_screen.dart';
+import 'package:piga_luku_customers/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 
 class MapScreen extends StatefulWidget {
@@ -45,8 +45,6 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     final LocationProvider locationData = Provider.of<LocationProvider>(context);
     final _auth = Provider.of<AuthProvider>(context);
-    double? latitude;
-    double? longitude;
     late LatLng currentLocation;
 
 
@@ -204,7 +202,7 @@ class _MapScreenState extends State<MapScreen> {
                                               address: '${locationData.selectedAddress!.name}, ${locationData.selectedAddress!.street}, ${locationData.selectedAddress!.locality}, ${locationData.selectedAddress!.administrativeArea}'
                                           ).then((value){
                                             if (value == true) {
-                                              Navigator.pushNamed(context, HomeScreen.id);
+                                              Navigator.pushNamed(context, MainScreen.id);
                                               locationData.savePreferences(locationData.longitude, locationData.latitude, locationData.selectedAddress);
                                             } else {
                                               
