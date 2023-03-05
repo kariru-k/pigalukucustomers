@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/firebase_options.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
+import 'package:piga_luku_customers/providers/store_provider.dart';
 import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:piga_luku_customers/screens/login_screen.dart';
 import 'package:piga_luku_customers/screens/map_screen.dart';
@@ -24,7 +25,10 @@ void main() async{
         ),
         ChangeNotifierProvider(
             create: (_)=> LocationProvider()
-        )
+        ),
+        ChangeNotifierProvider(
+            create: (_)=> StoreProvider()
+        ),
       ],
     child: const MyApp(),
   ));

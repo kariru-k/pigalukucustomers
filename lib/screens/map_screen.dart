@@ -58,7 +58,6 @@ class _MapScreenState extends State<MapScreen> {
 
 
     setState(() {
-      locationData.getCurrentPosition();
       currentLocation = LatLng(locationData.latitude as double, locationData.longitude as double);
     });
 

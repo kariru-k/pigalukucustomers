@@ -1,10 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:piga_luku_customers/screens/welcome_screen.dart';
 import 'package:piga_luku_customers/services/store_services.dart';
-import 'package:piga_luku_customers/services/user_services.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/store_provider.dart';
 
 class TopPickStore extends StatefulWidget {
   const TopPickStore({Key? key}) : super(key: key);
@@ -15,47 +17,37 @@ class TopPickStore extends StatefulWidget {
 
 class _TopPickStoreState extends State<TopPickStore> {
   final StoreServices _storeServices = StoreServices();
-  final UserServices _userServices = UserServices();
   User? user = FirebaseAuth.instance.currentUser;
   double? _userLatitude = 0.0;
   double? _userLongitude = 0.0;
 
-  @override
-  void initState() {
-    _userServices.getUserById(user!.uid).then((result){
-      if (user != null) {
-        setState(() {
-          GeoPoint? userLocation = result['location'];
-          _userLatitude = userLocation!.latitude;
-          _userLongitude = userLocation.longitude;
-          print(_userLatitude);
-          print(_userLongitude);
-        });
-      } else {
-        Navigator.pushReplacementNamed(context, WelcomeScreen.id);
-      }
-    });
-    super.initState();
-  }
 
-  String getDistance(location){
-    print(_userLatitude);
-    print(_userLongitude);
-    var distance = Geolocator.distanceBetween(_userLatitude!, _userLongitude!, location.latitude, location.longitude);
-    return (distance / 1000).toStringAsFixed(2);
-  }
+
 
 
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: StreamBuilder<QuerySnapshot>(
-        stream: _storeServices.getTopPickedStore(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
-          if(!snapshot.hasData) return const CircularProgressIndicator();
+    final _storeData = Provider.of<StoreProvider>(context);
+    _storeData.getUserLocationData(context);
 
-          return Column(
+    String getDistance(location){
+      var distance = Geolocator.distanceBetween(_storeData.userLatitude as double, _storeData.userLongitude as double, location.latitude, location.longitude);
+      return (distance / 1000).toStringAsFixed(2);
+    }
+
+
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: _storeServices.getTopPickedStore(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
+        if(!snapshot.hasData) return const CircularProgressIndicator();
+
+        return Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
@@ -96,8 +88,8 @@ class _TopPickStoreState extends State<TopPickStore> {
                                 child: Card(
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(4.0),
-                                      child: Image.network(
-                                        document['url'],
+                                      child: CachedNetworkImage(
+                                        imageUrl: document['url'],
                                         fit: BoxFit.cover,
                                       ),
                                     )
@@ -127,15 +119,19 @@ class _TopPickStoreState extends State<TopPickStore> {
                         ),
                       );
                     } else {
-                      return Container();
+                      return Container(
+                        child: const Center(
+                          child: Text("Unfortunately there are no stores near your location"),
+                        ),
+                      );
                     }
                   }).toList(),
                 ),
               )
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

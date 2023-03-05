@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dots_indicator/dots_indicator.dart';
@@ -52,7 +53,12 @@ class _ImageSliderState extends State<ImageSlider> {
                   Map? getImage = sliderImage.data() as Map?;
                   return SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      child: Image.network(getImage!['image'], fit: BoxFit.fill, width: 640, height: 320,)
+                      child: CachedNetworkImage(
+                        imageUrl: getImage!['image'],
+                        fit: BoxFit.fill,
+                        width: 640,
+                        height: 320,
+                      )
                   );
                 },
                 options: CarouselOptions(

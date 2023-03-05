@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
 import 'package:piga_luku_customers/screens/map_screen.dart';
-import 'package:piga_luku_customers/screens/top_pick_store.dart';
+import 'package:piga_luku_customers/widgets/near_by_store.dart';
+import 'package:piga_luku_customers/widgets/top_pick_store.dart';
 import 'package:piga_luku_customers/screens/welcome_screen.dart';
 import 'package:piga_luku_customers/widgets/image_slider.dart';
 import 'package:provider/provider.dart';
@@ -148,19 +149,17 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+      body: ListView(
+        children: const [
             Padding(
               padding: EdgeInsets.only(top: 8.0),
               child: ImageSlider(),
             ),
             SizedBox(
-                height: 300,
-                child: TopPickStore())
+                height: 200,
+                child: TopPickStore()),
+            NearByStores()
         ]),
-      ),
-    );
+      );
   }
 }

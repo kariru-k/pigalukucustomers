@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 const kPageViewTextStyle = TextStyle(
   fontSize: 20,
@@ -6,3 +6,13 @@ const kPageViewTextStyle = TextStyle(
 );
 
 const kApiKey = 'AIzaSyBiAJk-EOMngPk0xAPVsLX6jef8S6Yna7c';
+
+const storeCardStyle = TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.bold
+);
+
+const storeDialogCardStyle = TextStyle(
+    fontSize: 12,
+    color: Colors.grey
+);
