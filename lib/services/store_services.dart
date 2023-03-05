@@ -10,6 +10,5 @@ class StoreServices{
         .where("isTopPicked", isEqualTo: true)
         .orderBy("shopName")
         .snapshots();
-
   }
 }

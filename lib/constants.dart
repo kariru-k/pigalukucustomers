@@ -14,5 +14,5 @@ const storeCardStyle = TextStyle(
 
 const storeDialogCardStyle = TextStyle(
     fontSize: 12,
-    color: Colors.grey
+    color: Colors.purpleAccent
 );

@@ -37,6 +37,26 @@ class _NearByStoreState extends State<NearByStores> {
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
           if(!snapshot.hasData) return const CircularProgressIndicator();
 
+          List shopDistance = [];
+          for (int i = 0; i <= snapshot.data!.docs.length-1; i++){
+            var distance = Geolocator.distanceBetween(_storeData.userLatitude as double, _storeData.userLongitude as double, snapshot.data!.docs[i]['location'].latitude, snapshot.data!.docs[i]['location'].longitude);
+            var distanceInKm = distance / 1000;
+            shopDistance.add(distanceInKm);
+          }
+          shopDistance.sort();
+          if (shopDistance[0] > 5) {
+            return const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Center(child: Text(
+                "Unfortunately there are no Stores near you at the moment. Come again later!",
+                style: storeCardStyle,
+              )),
+            );
+          }
+
+
+
+
           return Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 8.0),
             child: Column(
@@ -77,8 +97,12 @@ class _NearByStoreState extends State<NearByStores> {
                         ),
                       ),
                     ),
-                    bottomLoader: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
+                    bottomLoader: SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
+                      ),
                     ),
                     header: SliverToBoxAdapter(
                       child: Column(
@@ -141,7 +165,7 @@ class _NearByStoreState extends State<NearByStores> {
                                       child: Text(
                                         data["shopName"],
                                         style: storeCardStyle,
-                                        maxLines: 2,
+                                        maxLines: 3,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
@@ -180,10 +204,9 @@ class _NearByStoreState extends State<NearByStores> {
                           ),
                         );
                       } else {
-                        return Container(
-                          child: const Center(
-                            child: Text("Unfortunately there are no stores near your location"),
-                          ),
+                        return Visibility(
+                          visible: false,
+                          child: Container(),
                         );
                       }
                     },
@@ -193,6 +216,12 @@ class _NearByStoreState extends State<NearByStores> {
               ],
             ),
           );
+
+
+
+
+
+
         }
     );
   }
