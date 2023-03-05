@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
+import 'package:piga_luku_customers/screens/main_screen.dart';
 import 'package:piga_luku_customers/screens/map_screen.dart';
 import 'package:piga_luku_customers/screens/welcome_screen.dart';
 import 'package:piga_luku_customers/services/user_services.dart';
@@ -49,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
     _userServices.getUserById(user!.uid).then((result){
       if (result["location"] != null) {
         print("Null BOYY");
-        Navigator.pushReplacementNamed(context, HomeScreen.id);
+        Navigator.pushReplacementNamed(context, MainScreen.id);
       } else {
         Navigator.pushReplacementNamed(context, MapScreen.id);
       }

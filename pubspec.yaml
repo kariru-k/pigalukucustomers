@@ -29,6 +29,7 @@ dependencies:
   location: ^4.4.0
   cached_network_image: ^3.2.3
   flutterflow_paginate_firestore: ^1.0.3+1
+  persistent_bottom_nav_bar: ^5.0.2
 
 
 dev_dependencies:

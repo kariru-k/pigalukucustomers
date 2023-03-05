@@ -49,120 +49,127 @@ class _HomeScreenState extends State<HomeScreen> {
     final locationData = Provider.of<LocationProvider>(context);
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        backgroundColor: Theme.of(context).primaryColor,
-        elevation: 0.0,
-        centerTitle: true,
-        leading: const Icon(Icons.menu),
-        title: TextButton(
-          onPressed: () {},
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled){
+          return [
+            SliverAppBar(
+              automaticallyImplyLeading: true,
+              backgroundColor: Theme.of(context).primaryColor,
+              elevation: 0.0,
+              centerTitle: true,
+              leading: const Icon(Icons.menu),
+              title: TextButton(
+                onPressed: () {},
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          _location,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold
-                          ),
+                        Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _location,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                                Text(
+                                  _street,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      color: Colors.white
+                                  ),
+                                ),
+                                Text(
+                                  _locality,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      color: Colors.white
+                                  ),
+                                ),
+                              ],
+                            )
                         ),
-                        Text(
-                          _street,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.white
-                          ),
-                        ),
-                        Text(
-                          _locality,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: Colors.white
-                          ),
-                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit_outlined, size: 18,),
+                          color: Colors.white,
+                          onPressed: () {
+                            locationData.getCurrentPosition();
+                            if(locationData.permissionAllowed == true){
+                              Navigator.pushNamed(context, MapScreen.id);
+                            } else {
+                              print("Permission denied");
+                            }
+                          },
+                        )
                       ],
-                    )
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined, size: 18,),
-                    color: Colors.white,
-                    onPressed: () {
-                      locationData.getCurrentPosition();
-                      if(locationData.permissionAllowed == true){
-                        Navigator.pushNamed(context, MapScreen.id);
-                      } else {
-                        print("Permission denied");
-                      }
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: IconButton(
+                    icon: const Icon(Icons.power_settings_new_sharp),
+                    onPressed: (){
+                      FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacementNamed(context, WelcomeScreen.id);
                     },
-                  )
-                ],
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: IconButton(
-              icon: const Icon(Icons.power_settings_new_sharp),
-              onPressed: (){
-                FirebaseAuth.instance.signOut();
-                Navigator.pushReplacementNamed(context, WelcomeScreen.id);
-              },
-              alignment: Alignment.topLeft,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: IconButton(
-              icon: const Icon(Icons.account_circle_outlined),
-              onPressed: (){},
-              alignment: Alignment.topLeft,
-            ),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(75.0),
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none
+                    alignment: Alignment.topLeft,
                   ),
-                  contentPadding: EdgeInsets.zero,
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "Search for your location",
-                  prefixIcon: const Icon(Icons.search_sharp, color: Colors.black,)
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: IconButton(
+                    icon: const Icon(Icons.account_circle_outlined),
+                    onPressed: (){},
+                    alignment: Alignment.topLeft,
+                  ),
+                ),
+              ],
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(75.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: "Search for your location",
+                        prefixIcon: const Icon(Icons.search_sharp, color: Colors.black,)
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
+          )
+          ];
+        },
+        body: ListView(
+          padding: const EdgeInsets.only(top: 0.0),
+          children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: ImageSlider(),
+              ),
+              Container(
+                  height: 200,
+                  color: Colors.white,
+                  child: const TopPickStore()
+              ),
+              const NearByStores()
+          ]),
       ),
-      body: ListView(
-        children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: ImageSlider(),
-            ),
-            Container(
-                height: 200,
-                color: Colors.white,
-                child: const TopPickStore()
-            ),
-            const NearByStores()
-        ]),
       );
   }
 }
