@@ -39,53 +39,56 @@ class _ImageSliderState extends State<ImageSlider> {
   Widget build(BuildContext context) {
 
 
-    return Column(
-      children: [
-        FutureBuilder(
-          future: getImagesFromDb(),
-          builder: (_, snapShot){
-            return snapShot.data == null ? const Center(child: CircularProgressIndicator(),) : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CarouselSlider.builder(
-                itemCount: snapShot.data.length,
-                itemBuilder: (context, int index, int pageViewIndex){
-                  DocumentSnapshot sliderImage = snapShot.data[index];
-                  Map? getImage = sliderImage.data() as Map?;
-                  return SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: CachedNetworkImage(
-                        imageUrl: getImage!['image'],
-                        fit: BoxFit.fill,
-                        width: 640,
-                        height: 320,
-                      )
-                  );
-                },
-                options: CarouselOptions(
-                  initialPage: 0,
-                  viewportFraction: 1,
-                  autoPlay: true,
-                  onPageChanged: (int i, carouselchangeReason){
-                    setState(() {
-                      index = i;
-                    });
-                  }
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          FutureBuilder(
+            future: getImagesFromDb(),
+            builder: (_, snapShot){
+              return snapShot.data == null ? const Center(child: CircularProgressIndicator(),) : Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CarouselSlider.builder(
+                  itemCount: snapShot.data.length,
+                  itemBuilder: (context, int index, int pageViewIndex){
+                    DocumentSnapshot sliderImage = snapShot.data[index];
+                    Map? getImage = sliderImage.data() as Map?;
+                    return SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: CachedNetworkImage(
+                          imageUrl: getImage!['image'],
+                          fit: BoxFit.fill,
+                          width: 640,
+                          height: 320,
+                        )
+                    );
+                  },
+                  options: CarouselOptions(
+                    initialPage: 0,
+                    viewportFraction: 1,
+                    autoPlay: true,
+                    onPageChanged: (int i, carouselchangeReason){
+                      setState(() {
+                        index = i;
+                      });
+                    }
+                  ),
                 ),
-              ),
-            );
-          },
-        ),
-        DotsIndicator(
-          dotsCount: datalength,
-          position: index.toDouble(),
-          decorator: DotsDecorator(
-              size: const Size.square(5.0),
-              activeSize: const Size(18.0, 9.0),
-              activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-              activeColor: Theme.of(context).primaryColor
+              );
+            },
           ),
-        ),
-      ],
+          DotsIndicator(
+            dotsCount: datalength,
+            position: index.toDouble(),
+            decorator: DotsDecorator(
+                size: const Size.square(5.0),
+                activeSize: const Size(18.0, 9.0),
+                activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                activeColor: Theme.of(context).primaryColor
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

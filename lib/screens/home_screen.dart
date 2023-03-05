@@ -48,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final auth = Provider.of<AuthProvider>(context);
     final locationData = Provider.of<LocationProvider>(context);
     return Scaffold(
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         automaticallyImplyLeading: true,
         backgroundColor: Theme.of(context).primaryColor,
@@ -150,15 +151,17 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: ListView(
-        children: const [
-            Padding(
+        children: [
+            const Padding(
               padding: EdgeInsets.only(top: 8.0),
               child: ImageSlider(),
             ),
-            SizedBox(
+            Container(
                 height: 200,
-                child: TopPickStore()),
-            NearByStores()
+                color: Colors.white,
+                child: const TopPickStore()
+            ),
+            const NearByStores()
         ]),
       );
   }
