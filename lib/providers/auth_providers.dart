@@ -116,7 +116,6 @@ class AuthProvider with ChangeNotifier{
                           Navigator.pushReplacementNamed(context, MapScreen.id)
                         }
                       }else {
-                        //The user data does not exist s we need to create new data
                         locationData.getCurrentPosition(),
                         _createUser(
                           id: user.uid,

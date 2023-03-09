@@ -2,7 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
+import 'package:piga_luku_customers/screens/main_screen.dart';
 import 'package:piga_luku_customers/screens/map_screen.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+
 import 'package:piga_luku_customers/widgets/near_by_store.dart';
 import 'package:piga_luku_customers/widgets/top_pick_store.dart';
 import 'package:piga_luku_customers/screens/welcome_screen.dart';
@@ -101,7 +104,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () {
                             locationData.getCurrentPosition();
                             if(locationData.permissionAllowed == true){
-                              Navigator.pushNamed(context, MapScreen.id);
+                              PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                context,
+                                screen: const MapScreen(),
+                                withNavBar: true,
+                                settings: const RouteSettings(name: MapScreen.id),
+                                pageTransitionAnimation: PageTransitionAnimation.fade
+                              );
                             } else {
                               print("Permission denied");
                             }
