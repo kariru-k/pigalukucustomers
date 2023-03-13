@@ -128,7 +128,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: const Icon(Icons.power_settings_new_sharp),
                     onPressed: (){
                       FirebaseAuth.instance.signOut();
-                      Navigator.pushReplacementNamed(context, WelcomeScreen.id);
+                      PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                          context,
+                          screen: const WelcomeScreen(),
+                          withNavBar: false,
+                          settings: const RouteSettings(name: WelcomeScreen.id),
+                          pageTransitionAnimation: PageTransitionAnimation.fade
+                      );
                     },
                     alignment: Alignment.topLeft,
                   ),
