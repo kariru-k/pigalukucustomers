@@ -3,33 +3,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:piga_luku_customers/screens/vendor_home_screen.dart';
 import 'package:piga_luku_customers/services/store_services.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart';
 import '../providers/store_provider.dart';
 
-class TopPickStore extends StatefulWidget {
-  const TopPickStore({Key? key}) : super(key: key);
+class TopPickStore extends StatelessWidget {
 
-  @override
-  State<TopPickStore> createState() => _TopPickStoreState();
-}
-
-class _TopPickStoreState extends State<TopPickStore> {
-  final StoreServices _storeServices = StoreServices();
   User? user = FirebaseAuth.instance.currentUser;
-  double? _userLatitude = 0.0;
-  double? _userLongitude = 0.0;
+
   var i = 0;
 
-
-
-
-
+  TopPickStore({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final StoreServices _storeServices = StoreServices();
+
+
     final _storeData = Provider.of<StoreProvider>(context);
     _storeData.getUserLocationData(context);
 
@@ -103,46 +98,60 @@ class _TopPickStoreState extends State<TopPickStore> {
                     scrollDirection: Axis.horizontal,
                     children: snapshot.data!.docs.map((DocumentSnapshot document){
                       if(double.parse(getDistance(document['location'])) <= 5){
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: SizedBox(
-                            width: 80,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 80,
-                                  height: 80,
-                                  child: Card(
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(4.0),
-                                        child: CachedNetworkImage(
-                                          imageUrl: document['url'],
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 35,
-                                  child: Text(
-                                    document['shopName'],
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold
+
+                        return InkWell(
+                          onTap: () {
+                            _storeData.getSelectedStore(document["shopName"], document["uid"]);
+                            PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                context,
+                                screen: VendorHomeScreen(documentid: user!.uid,),
+                                withNavBar: false,
+                                settings: const RouteSettings(name: VendorHomeScreen.id),
+                                pageTransitionAnimation: PageTransitionAnimation.fade
+                            );
+                          },
+
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: SizedBox(
+                              width: 80,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 80,
+                                    height: 80,
+                                    child: Card(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(4.0),
+                                          child: CachedNetworkImage(
+                                            imageUrl: document['url'],
+                                            fit: BoxFit.cover,
+                                          ),
+                                        )
                                     ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                                Text(
-                                  "${getDistance(document["location"])}km",
-                                  style: const TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 10
+                                  SizedBox(
+                                    height: 35,
+                                    child: Text(
+                                      document['shopName'],
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                )
-                              ],
+                                  Text(
+                                    "${getDistance(document["location"])}km",
+                                    style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 10
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         );

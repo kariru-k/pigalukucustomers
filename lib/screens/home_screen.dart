@@ -13,6 +13,8 @@ import 'package:piga_luku_customers/widgets/image_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../widgets/my_appbar.dart';
+
 class HomeScreen extends StatefulWidget {
   static const String id = 'home-screen';
   const HomeScreen({Key? key}) : super(key: key);
@@ -55,119 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled){
           return [
-            SliverAppBar(
-              automaticallyImplyLeading: true,
-              backgroundColor: Theme.of(context).primaryColor,
-              elevation: 0.0,
-              centerTitle: true,
-              leading: const Icon(Icons.menu),
-              title: TextButton(
-                onPressed: () {},
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _location,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold
-                                  ),
-                                ),
-                                Text(
-                                  _street,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      color: Colors.white
-                                  ),
-                                ),
-                                Text(
-                                  _locality,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      color: Colors.white
-                                  ),
-                                ),
-                              ],
-                            )
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.edit_outlined, size: 18,),
-                          color: Colors.white,
-                          onPressed: () {
-                            locationData.getCurrentPosition();
-                            if(locationData.permissionAllowed == true){
-                              PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
-                                context,
-                                screen: const MapScreen(),
-                                withNavBar: true,
-                                settings: const RouteSettings(name: MapScreen.id),
-                                pageTransitionAnimation: PageTransitionAnimation.fade
-                              );
-                            } else {
-                              print("Permission denied");
-                            }
-                          },
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: IconButton(
-                    icon: const Icon(Icons.power_settings_new_sharp),
-                    onPressed: (){
-                      FirebaseAuth.instance.signOut();
-                      PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
-                          context,
-                          screen: const WelcomeScreen(),
-                          withNavBar: false,
-                          settings: const RouteSettings(name: WelcomeScreen.id),
-                          pageTransitionAnimation: PageTransitionAnimation.fade
-                      );
-                    },
-                    alignment: Alignment.topLeft,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: IconButton(
-                    icon: const Icon(Icons.account_circle_outlined),
-                    onPressed: (){},
-                    alignment: Alignment.topLeft,
-                  ),
-                ),
-              ],
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(75.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none
-                        ),
-                        contentPadding: EdgeInsets.zero,
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: "Search for your location",
-                        prefixIcon: const Icon(Icons.search_sharp, color: Colors.black,)
-                    ),
-                  ),
-                ),
-              ),
-          )
+            const MyAppBar()
           ];
         },
         body: ListView(
@@ -180,11 +70,13 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                   height: 200,
                   color: Colors.white,
-                  child: const TopPickStore()
+                  child: TopPickStore()
               ),
-              const NearByStores()
+            const NearByStores()
           ]),
       ),
       );
   }
 }
+
+

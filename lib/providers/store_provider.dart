@@ -12,6 +12,14 @@ class StoreProvider with ChangeNotifier{
   User? user = FirebaseAuth.instance.currentUser;
   double? userLatitude;
   double? userLongitude;
+  String? selectedStore;
+  String? selectedStoreId;
+
+
+  getSelectedStore(storeName, storeId){
+    selectedStore = storeName;
+    selectedStoreId = storeId;
+  }
 
 
   Future<void>getUserLocationData(context) async{

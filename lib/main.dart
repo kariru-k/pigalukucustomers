@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/firebase_options.dart';
@@ -11,6 +12,7 @@ import 'package:piga_luku_customers/screens/map_screen.dart';
 import 'package:piga_luku_customers/screens/onboard_screen.dart';
 import 'package:piga_luku_customers/screens/register_screen.dart';
 import 'package:piga_luku_customers/screens/splash_screen.dart';
+import 'package:piga_luku_customers/screens/vendor_home_screen.dart';
 import 'package:piga_luku_customers/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -40,6 +42,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    User? user = FirebaseAuth.instance.currentUser;
+
+
     return MaterialApp(
       theme: ThemeData(
         primaryColor: Colors.deepPurpleAccent,
@@ -55,7 +61,8 @@ class MyApp extends StatelessWidget {
         RegisterScreen.id:(context)=> const RegisterScreen(),
         OnBoardScreen.id:(context)=> const OnBoardScreen(),
         MapScreen.id:(context)=> const MapScreen(),
-        MainScreen.id:(context)=> const MainScreen()
+        MainScreen.id:(context)=> const MainScreen(),
+        VendorHomeScreen.id:(context) => VendorHomeScreen(documentid: user!.uid,)
       },
     );
   }

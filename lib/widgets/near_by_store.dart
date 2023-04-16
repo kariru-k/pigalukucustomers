@@ -10,19 +10,17 @@ import 'package:provider/provider.dart';
 
 import '../providers/store_provider.dart';
 
-class NearByStores extends StatefulWidget {
-  const NearByStores({Key? key}) : super(key: key);
+class NearByStores extends StatelessWidget {
+  const NearByStores({super.key});
 
-  @override
-  State<NearByStores> createState() => _NearByStoreState();
-}
-
-class _NearByStoreState extends State<NearByStores> {
-  StoreServices _storeServices = StoreServices();
-  PaginateRefreshedChangeListener _refreshedChangeListener = PaginateRefreshedChangeListener();
 
   @override
   Widget build(BuildContext context) {
+
+    final StoreServices _storeServices = StoreServices();
+
+    PaginateRefreshedChangeListener _refreshedChangeListener = PaginateRefreshedChangeListener();
+
     final _storeData = Provider.of<StoreProvider>(context);
     _storeData.getUserLocationData(context);
 

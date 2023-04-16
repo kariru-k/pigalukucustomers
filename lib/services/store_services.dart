@@ -3,6 +3,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StoreServices{
+
+  final CollectionReference vendorbanner = FirebaseFirestore.instance.collection("vendorbanner");
+
+
+
   getTopPickedStore(){
     return FirebaseFirestore.instance
         .collection("vendors")
