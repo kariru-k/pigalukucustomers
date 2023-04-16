@@ -53,6 +53,8 @@ class _MyAppBarState extends State<MyAppBar> {
       automaticallyImplyLeading: true,
       backgroundColor: Theme.of(context).primaryColor,
       elevation: 0.0,
+      floating: true,
+      snap: true,
       centerTitle: true,
       leading: const Icon(Icons.menu),
       title: TextButton(

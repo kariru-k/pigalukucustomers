@@ -24,13 +24,10 @@ class _VendorBannerState extends State<VendorBanner> {
 
   Future getImagesFromDb() async{
     var _firestore = FirebaseFirestore.instance;
-    QuerySnapshot snapshot = await _firestore.collection("vendorbanner").where("user", isEqualTo: widget.userid).get();
-    if (mounted) {
-      setState(() {
-        datalength = snapshot.docs.length;
-      });
-    }
-
+    QuerySnapshot snapshot = await _firestore.collection("vendorbanner").where("sellerUid", isEqualTo: widget.userid).get();
+    setState(() {
+      datalength = snapshot.docs.length;
+    });
     return snapshot.docs;
   }
 
@@ -77,19 +74,16 @@ class _VendorBannerState extends State<VendorBanner> {
               );
             },
           ),
-            Visibility(
-              visible: datalength > 0 ? true : false,
-              child: DotsIndicator(
-              dotsCount: datalength,
-              position: index.toDouble(),
-              decorator: DotsDecorator(
-                  size: const Size.square(5.0),
-                  activeSize: const Size(18.0, 9.0),
-                  activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-                  activeColor: Theme.of(context).primaryColor
-              ),
-          ),
+            DotsIndicator(
+            dotsCount: datalength,
+            position: index.toDouble(),
+            decorator: DotsDecorator(
+                size: const Size.square(5.0),
+                activeSize: const Size(18.0, 9.0),
+                activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                activeColor: Theme.of(context).primaryColor
             ),
+          ),
           ]else ... [
             const Text("No Banners To Display")
           ]

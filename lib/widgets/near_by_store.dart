@@ -10,36 +10,57 @@ import 'package:provider/provider.dart';
 
 import '../providers/store_provider.dart';
 
-class NearByStores extends StatelessWidget {
+class NearByStores extends StatefulWidget {
   const NearByStores({super.key});
+
+  @override
+  State<NearByStores> createState() => _NearByStoresState();
+}
+
+class _NearByStoresState extends State<NearByStores> {
+
+  double? latitude;
+  double? longitude;
+
+  @override
+  void didChangeDependencies(){
+    super.didChangeDependencies();
+    final _storeData = Provider.of<StoreProvider>(context);
+    _storeData.determinePosition().then((position){
+      setState(() {
+        latitude = position.latitude;
+        longitude = position.longitude;
+      });
+    });
+  }
+
+
+  String getDistance(location){
+    var distance = Geolocator.distanceBetween(latitude as double, longitude as double, location.latitude, location.longitude);
+    return (distance / 1000).toStringAsFixed(2);
+  }
+
+  final StoreServices _storeServices = StoreServices();
+
+  PaginateRefreshedChangeListener _refreshedChangeListener = PaginateRefreshedChangeListener();
 
 
   @override
   Widget build(BuildContext context) {
 
-    final StoreServices _storeServices = StoreServices();
-
-    PaginateRefreshedChangeListener _refreshedChangeListener = PaginateRefreshedChangeListener();
-
     final _storeData = Provider.of<StoreProvider>(context);
-    _storeData.getUserLocationData(context);
-
-
-    String getDistance(location){
-      var distance = Geolocator.distanceBetween(_storeData.userLatitude as double, _storeData.userLongitude as double, location.latitude, location.longitude);
-      return (distance / 1000).toStringAsFixed(2);
-    }
+    // _storeData.getUserLocationData(context);
 
     return Container(
       color: Colors.white,
       child: StreamBuilder<QuerySnapshot>(
           stream: _storeServices.getNearbyStorePagination(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
-            if(!snapshot.hasData) return const CircularProgressIndicator();
+            if(!snapshot.hasData) return Center(child: const CircularProgressIndicator());
 
             List shopDistance = [];
             for (int i = 0; i <= snapshot.data!.docs.length-1; i++){
-              var distance = Geolocator.distanceBetween(_storeData.userLatitude as double, _storeData.userLongitude as double, snapshot.data!.docs[i]['location'].latitude, snapshot.data!.docs[i]['location'].longitude);
+              var distance = Geolocator.distanceBetween(latitude as double, longitude as double, snapshot.data!.docs[i]['location'].latitude, snapshot.data!.docs[i]['location'].longitude);
               var distanceInKm = distance / 1000;
               shopDistance.add(distanceInKm);
             }
@@ -209,12 +230,6 @@ class NearByStores extends StatelessWidget {
                 ],
               ),
             );
-
-
-
-
-
-
           }
       ),
     );

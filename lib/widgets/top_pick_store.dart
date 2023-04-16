@@ -11,13 +11,41 @@ import 'package:provider/provider.dart';
 import '../constants.dart';
 import '../providers/store_provider.dart';
 
-class TopPickStore extends StatelessWidget {
+class TopPickStore extends StatefulWidget {
 
-  User? user = FirebaseAuth.instance.currentUser;
+
+  const TopPickStore({super.key});
+
+  @override
+  State<TopPickStore> createState() => _TopPickStoreState();
+}
+
+class _TopPickStoreState extends State<TopPickStore> {
+
+
+  double? latitude;
+  double? longitude;
+
 
   var i = 0;
 
-  TopPickStore({super.key});
+
+  @override
+  void didChangeDependencies(){
+    super.didChangeDependencies();
+    final _storeData = Provider.of<StoreProvider>(context);
+    _storeData.determinePosition().then((position){
+      setState(() {
+        latitude = position.latitude;
+        longitude = position.longitude;
+      });
+    });
+  }
+
+  String getDistance(location){
+    var distance = Geolocator.distanceBetween(latitude as double, longitude as double, location.latitude, location.longitude);
+    return (distance / 1000).toStringAsFixed(2);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,29 +54,24 @@ class TopPickStore extends StatelessWidget {
 
 
     final _storeData = Provider.of<StoreProvider>(context);
-    _storeData.getUserLocationData(context);
-
-    String getDistance(location){
-      var distance = Geolocator.distanceBetween(_storeData.userLatitude as double, _storeData.userLongitude as double, location.latitude, location.longitude);
-      return (distance / 1000).toStringAsFixed(2);
-    }
-
-
+    // _storeData.getUserLocationData(context);
 
     return StreamBuilder<QuerySnapshot>(
       stream: _storeServices.getTopPickedStore(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
         if(!snapshot.hasData) {
-          return const SizedBox(
-            height: 40,
-            width: 40,
-            child: CircularProgressIndicator())
+          return const Center(
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: CircularProgressIndicator()),
+          )
         ;
         }
 
         List shopDistance = [];
         for (int i = 0; i <= snapshot.data!.docs.length-1; i++){
-          var distance = Geolocator.distanceBetween(_storeData.userLatitude as double, _storeData.userLongitude as double, snapshot.data!.docs[i]['location'].latitude, snapshot.data!.docs[i]['location'].longitude);
+          var distance = Geolocator.distanceBetween(latitude as double, longitude as double, snapshot.data!.docs[i]['location'].latitude, snapshot.data!.docs[i]['location'].longitude);
           var distanceInKm = distance / 1000;
           shopDistance.add(distanceInKm);
         }
@@ -101,10 +124,10 @@ class TopPickStore extends StatelessWidget {
 
                         return InkWell(
                           onTap: () {
-                            _storeData.getSelectedStore(document["shopName"], document["uid"]);
+                            _storeData.getSelectedStore(document, getDistance(document['location']));
                             PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                                 context,
-                                screen: VendorHomeScreen(documentid: user!.uid,),
+                                screen: VendorHomeScreen(documentid: document["uid"],),
                                 withNavBar: false,
                                 settings: const RouteSettings(name: VendorHomeScreen.id),
                                 pageTransitionAnimation: PageTransitionAnimation.fade
