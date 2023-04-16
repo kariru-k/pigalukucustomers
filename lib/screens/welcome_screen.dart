@@ -63,7 +63,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           });
                         });
                       }else {
-                        print('Permission has not been granted');
                         setState(() {
                           locationData.loading = false;
                         });
@@ -88,14 +87,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     onPressed: () async{
                       await locationData.getCurrentPosition();
                       if(!locationData.serviceEnabled){
-                        print("No location enabled!");
                       }
                       if(locationData.permissionAllowed){
                         locationData.getCurrentPosition().then((value){
                           Navigator.pushReplacementNamed(context, LoginScreen.id);
                         });
                       }else {
-                        print('Permission has not been granted');
                       }
                     },
                     child: RichText(

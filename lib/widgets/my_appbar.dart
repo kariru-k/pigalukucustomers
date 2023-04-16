@@ -108,7 +108,6 @@ class _MyAppBarState extends State<MyAppBar> {
                           pageTransitionAnimation: PageTransitionAnimation.fade
                       );
                     } else {
-                      print("Permission denied");
                     }
                   },
                 )

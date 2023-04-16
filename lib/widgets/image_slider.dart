@@ -24,8 +24,8 @@ class _ImageSliderState extends State<ImageSlider> {
   }
 
   Future getImagesFromDb() async{
-    var _firestore = FirebaseFirestore.instance;
-    QuerySnapshot snapshot = await _firestore.collection("slider").get();
+    var firestore = FirebaseFirestore.instance;
+    QuerySnapshot snapshot = await firestore.collection("slider").get();
     if (mounted) {
       setState(() {
         datalength = snapshot.docs.length;

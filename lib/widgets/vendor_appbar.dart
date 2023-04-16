@@ -13,16 +13,16 @@ class VendorAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var _store = Provider.of<StoreProvider>(context);
+    var store = Provider.of<StoreProvider>(context);
 
     mapLauncher() async{
 
-      GeoPoint location = _store.storedetails!["location"];
+      GeoPoint location = store.storedetails!["location"];
 
       final availableMaps = await MapLauncher.installedMaps;
       await availableMaps.first.showMarker(
         coords: Coords(location.latitude, location.longitude),
-        title: "${_store.storedetails!["shopName"]} is here",
+        title: "${store.storedetails!["shopName"]} is here",
       );
     }
 
@@ -44,7 +44,7 @@ class VendorAppBar extends StatelessWidget {
                     image: DecorationImage(
                         fit: BoxFit.cover,
                         image: NetworkImage(
-                            _store.storedetails!["url"]
+                            store.storedetails!["url"]
                         )
                     ),
                   ),
@@ -53,7 +53,7 @@ class VendorAppBar extends StatelessWidget {
                     child: ListView(
                       children: [
                         Text(
-                          _store.storedetails!["description"],
+                          store.storedetails!["description"],
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -61,19 +61,19 @@ class VendorAppBar extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          _store.storedetails!["address"],
+                          store.storedetails!["address"],
                           style: const TextStyle(
                             color: Colors.white
                           ),
                         ),
                         Text(
-                          _store.storedetails!["email"],
+                          store.storedetails!["email"],
                           style: const TextStyle(
                               color: Colors.white
                           ),
                         ),
                         Text(
-                          "Distance: ${_store.distance.toString()} km",
+                          "Distance: ${store.distance.toString()} km",
                           style: const TextStyle(
                               color: Colors.white
                           ),
@@ -97,7 +97,7 @@ class VendorAppBar extends StatelessWidget {
                               child: IconButton(
                                 icon: const Icon(Icons.phone),
                                 onPressed: () {
-                                  launchUrlString("tel: 0${_store.storedetails!["storePhoneNumber"]}");
+                                  launchUrlString("tel: 0${store.storedetails!["storePhoneNumber"]}");
                                 },
                                 color: Theme.of(context).primaryColor,
                               ),
@@ -138,7 +138,7 @@ class VendorAppBar extends StatelessWidget {
         )
       ],
       title: Text(
-        _store.storedetails!['shopName'],
+        store.storedetails!['shopName'],
       ),
     );
   }

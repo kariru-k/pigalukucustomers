@@ -20,7 +20,6 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
 
-  late GoogleMapController _mapController;
   bool _locating = false;
   bool _loggedIn = false;
   late User? user;
@@ -45,6 +44,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     final LocationProvider locationData = Provider.of<LocationProvider>(context);
+    // ignore: no_leading_underscores_for_local_identifiers
     final _auth = Provider.of<AuthProvider>(context);
     late LatLng currentLocation;
 
@@ -62,7 +62,6 @@ class _MapScreenState extends State<MapScreen> {
 
     void onCreated(GoogleMapController controller) {
       setState(() {
-        _mapController = controller;
       });
     }
 

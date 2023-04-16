@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -33,8 +32,8 @@ class _TopPickStoreState extends State<TopPickStore> {
   @override
   void didChangeDependencies(){
     super.didChangeDependencies();
-    final _storeData = Provider.of<StoreProvider>(context);
-    _storeData.determinePosition().then((position){
+    final storeData = Provider.of<StoreProvider>(context);
+    storeData.determinePosition().then((position){
       setState(() {
         latitude = position.latitude;
         longitude = position.longitude;
@@ -50,14 +49,14 @@ class _TopPickStoreState extends State<TopPickStore> {
   @override
   Widget build(BuildContext context) {
 
-    final StoreServices _storeServices = StoreServices();
+    final StoreServices storeServices = StoreServices();
 
 
-    final _storeData = Provider.of<StoreProvider>(context);
+    final storeData = Provider.of<StoreProvider>(context);
     // _storeData.getUserLocationData(context);
 
     return StreamBuilder<QuerySnapshot>(
-      stream: _storeServices.getTopPickedStore(),
+      stream: storeServices.getTopPickedStore(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
         if(!snapshot.hasData) {
           return const Center(
@@ -124,7 +123,7 @@ class _TopPickStoreState extends State<TopPickStore> {
 
                         return InkWell(
                           onTap: () {
-                            _storeData.getSelectedStore(document, getDistance(document['location']));
+                            storeData.getSelectedStore(document, getDistance(document['location']));
                             PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                                 context,
                                 screen: VendorHomeScreen(documentid: document["uid"],),

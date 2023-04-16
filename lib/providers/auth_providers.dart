@@ -28,7 +28,6 @@ class AuthProvider with ChangeNotifier{
 
     verificationFailed(FirebaseAuthException e){
       loading = false;
-      print(e.code);
       error = e.toString();
       notifyListeners();
     }
@@ -54,7 +53,6 @@ class AuthProvider with ChangeNotifier{
       
       
     } catch(e){
-      print(e);
       error = e.toString();
       loading = false;
       notifyListeners();
@@ -128,7 +126,6 @@ class AuthProvider with ChangeNotifier{
                       }
                     });
                   } else {
-                    print("Login failed");
                   }
 
 
@@ -136,7 +133,6 @@ class AuthProvider with ChangeNotifier{
                 }catch(e){
                   error = e.toString();
                   notifyListeners();
-                  print(e.toString());
                   Navigator.of(context).pop();
                 }
               },
@@ -175,7 +171,6 @@ class AuthProvider with ChangeNotifier{
       notifyListeners();
       return true;
     } catch(e){
-      print("Error $e");
       return false;
     }
   }

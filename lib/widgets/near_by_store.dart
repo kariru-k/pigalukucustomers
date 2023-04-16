@@ -25,8 +25,8 @@ class _NearByStoresState extends State<NearByStores> {
   @override
   void didChangeDependencies(){
     super.didChangeDependencies();
-    final _storeData = Provider.of<StoreProvider>(context);
-    _storeData.determinePosition().then((position){
+    final storeData = Provider.of<StoreProvider>(context);
+    storeData.determinePosition().then((position){
       setState(() {
         latitude = position.latitude;
         longitude = position.longitude;
@@ -42,13 +42,12 @@ class _NearByStoresState extends State<NearByStores> {
 
   final StoreServices _storeServices = StoreServices();
 
-  PaginateRefreshedChangeListener _refreshedChangeListener = PaginateRefreshedChangeListener();
+  final PaginateRefreshedChangeListener _refreshedChangeListener = PaginateRefreshedChangeListener();
 
 
   @override
   Widget build(BuildContext context) {
 
-    final _storeData = Provider.of<StoreProvider>(context);
     // _storeData.getUserLocationData(context);
 
     return Container(
@@ -56,7 +55,7 @@ class _NearByStoresState extends State<NearByStores> {
       child: StreamBuilder<QuerySnapshot>(
           stream: _storeServices.getNearbyStorePagination(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
-            if(!snapshot.hasData) return Center(child: const CircularProgressIndicator());
+            if(!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
             List shopDistance = [];
             for (int i = 0; i <= snapshot.data!.docs.length-1; i++){
@@ -152,7 +151,7 @@ class _NearByStoresState extends State<NearByStores> {
                         if(double.parse(getDistance(data!['location'])) <= 5){
                           return Padding(
                             padding: const EdgeInsets.all(4),
-                            child: Container(
+                            child: SizedBox(
                               width: MediaQuery.of(context).size.width,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -175,18 +174,16 @@ class _NearByStoresState extends State<NearByStores> {
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Container(
-                                        child: Text(
-                                          data["shopName"],
-                                          style: storeCardStyle,
-                                          maxLines: 3,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                      Text(
+                                        data["shopName"],
+                                        style: storeCardStyle,
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                       const SizedBox(height: 3,),
                                       Text(data["description"], style: storeDialogCardStyle,),
                                       const SizedBox(height: 3,),
-                                      Container(
+                                      SizedBox(
                                         width: MediaQuery.of(context).size.width - 250,
                                         child: Text(
                                           data["address"],

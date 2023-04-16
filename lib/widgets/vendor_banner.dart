@@ -23,8 +23,8 @@ class _VendorBannerState extends State<VendorBanner> {
   int datalength = 1;
 
   Future getImagesFromDb() async{
-    var _firestore = FirebaseFirestore.instance;
-    QuerySnapshot snapshot = await _firestore.collection("vendorbanner").where("sellerUid", isEqualTo: widget.userid).get();
+    var firestore = FirebaseFirestore.instance;
+    QuerySnapshot snapshot = await firestore.collection("vendorbanner").where("sellerUid", isEqualTo: widget.userid).get();
     setState(() {
       datalength = snapshot.docs.length;
     });

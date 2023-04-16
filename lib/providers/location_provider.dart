@@ -24,9 +24,7 @@ class LocationProvider with ChangeNotifier{
     if (!serviceEnabled) {
       bool isturnedon = await location.requestService();
       if (isturnedon) {
-        print("GPS device is turned ON");
       }else{
-        print("GPS Device is still OFF");
       }
     }
     permission = await Geolocator.checkPermission();
@@ -62,16 +60,14 @@ class LocationProvider with ChangeNotifier{
   getMoveCamera() async{
     final addresses = await placemarkFromCoordinates(latitude!, longitude!);
     selectedAddress = addresses.first;
-    print('${selectedAddress?.locality}');
     notifyListeners();
   }
 
   Future<void>savePreferences(double? latitude,double? longitude,Placemark? address) async {
-    print(address!.administrativeArea);
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setDouble("latitude", latitude!);
     preferences.setDouble("longitude", longitude!);
-    preferences.setString("address", "${address.name}");
+    preferences.setString("address", "${address!.name}");
     preferences.setString("street", "${address.street}");
     preferences.setString("locality", "${address.locality}");
 

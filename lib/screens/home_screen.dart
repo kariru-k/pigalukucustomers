@@ -1,14 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
-import 'package:piga_luku_customers/screens/main_screen.dart';
-import 'package:piga_luku_customers/screens/map_screen.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 import 'package:piga_luku_customers/widgets/near_by_store.dart';
 import 'package:piga_luku_customers/widgets/top_pick_store.dart';
-import 'package:piga_luku_customers/screens/welcome_screen.dart';
 import 'package:piga_luku_customers/widgets/image_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                   height: 200,
                   color: Colors.white,
-                  child: TopPickStore()
+                  child: const TopPickStore()
               ),
             const NearByStores()
           ]),

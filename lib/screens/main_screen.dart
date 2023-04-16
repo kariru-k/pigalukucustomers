@@ -13,9 +13,9 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    PersistentTabController _controller;
+    PersistentTabController controller;
 
-    _controller = PersistentTabController(initialIndex: 0);
+    controller = PersistentTabController(initialIndex: 0);
 
     List<Widget> _buildScreens() {
       return [
@@ -60,7 +60,7 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       body: PersistentTabView(
           context,
-          controller: _controller,
+          controller: controller,
           screens: _buildScreens(),
           navBarHeight: 50,
           items: _navBarsItems(),

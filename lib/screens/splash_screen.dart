@@ -10,7 +10,6 @@ import 'package:piga_luku_customers/services/user_services.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart';
-import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   static const String id = 'splash-screen';
@@ -45,11 +44,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   getUserData() async{
-    UserServices _userServices = UserServices();
+    UserServices userServices = UserServices();
     await locationProvider.getCurrentPosition();
-    _userServices.getUserById(user!.uid).then((result){
+    userServices.getUserById(user!.uid).then((result){
       if (result["location"] != null) {
-        print("Null BOYY");
         Navigator.pushReplacementNamed(context, MainScreen.id);
       } else {
         Navigator.pushReplacementNamed(context, MapScreen.id);
