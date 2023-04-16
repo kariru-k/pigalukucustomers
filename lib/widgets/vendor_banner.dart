@@ -24,7 +24,7 @@ class _VendorBannerState extends State<VendorBanner> {
 
   Future getImagesFromDb() async{
     var _firestore = FirebaseFirestore.instance;
-    QuerySnapshot snapshot = await _firestore.collection("vendorbanner").where("user").get();
+    QuerySnapshot snapshot = await _firestore.collection("vendorbanner").where("user", isEqualTo: widget.userid).get();
     if (mounted) {
       setState(() {
         datalength = snapshot.docs.length;
@@ -41,8 +41,8 @@ class _VendorBannerState extends State<VendorBanner> {
       color: Colors.white,
       child: Column(
         children: [
-          if (datalength != 0)
-          FutureBuilder(
+          if (datalength != 0)... [
+            FutureBuilder(
             future: getImagesFromDb(),
             builder: (_, snapShot){
               return snapShot.data == null ? const Center(child: CircularProgressIndicator(),) : Padding(
@@ -64,6 +64,7 @@ class _VendorBannerState extends State<VendorBanner> {
                   },
                   options: CarouselOptions(
                       initialPage: 0,
+                      height: 180,
                       viewportFraction: 1,
                       autoPlay: true,
                       onPageChanged: (int i, carouselchangeReason){
@@ -76,16 +77,22 @@ class _VendorBannerState extends State<VendorBanner> {
               );
             },
           ),
-          DotsIndicator(
-            dotsCount: datalength,
-            position: index.toDouble(),
-            decorator: DotsDecorator(
-                size: const Size.square(5.0),
-                activeSize: const Size(18.0, 9.0),
-                activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-                activeColor: Theme.of(context).primaryColor
-            ),
+            Visibility(
+              visible: datalength > 0 ? true : false,
+              child: DotsIndicator(
+              dotsCount: datalength,
+              position: index.toDouble(),
+              decorator: DotsDecorator(
+                  size: const Size.square(5.0),
+                  activeSize: const Size(18.0, 9.0),
+                  activeShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                  activeColor: Theme.of(context).primaryColor
+              ),
           ),
+            ),
+          ]else ... [
+            const Text("No Banners To Display")
+          ]
         ],
       ),
     );
