@@ -1,16 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:piga_luku_customers/providers/store_provider.dart';
-import 'package:piga_luku_customers/screens/welcome_screen.dart';
-import 'package:piga_luku_customers/widgets/image_slider.dart';
 import 'package:piga_luku_customers/widgets/vendor_appbar.dart';
 import 'package:piga_luku_customers/widgets/vendor_banner.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../widgets/my_appbar.dart';
+import '../widgets/categories_widget.dart';
 
 class VendorHomeScreen extends StatelessWidget {
   static const String id = "vendor-screen";
@@ -32,6 +24,7 @@ class VendorHomeScreen extends StatelessWidget {
           body: Column(
             children: [
               VendorBanner(userid: documentid,),
+              const Expanded(child: VendorCategories())
             ],
           )
       ),
