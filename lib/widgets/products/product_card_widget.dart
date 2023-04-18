@@ -6,8 +6,23 @@ class ProductCard extends StatelessWidget {
 
   final DocumentSnapshot document;
 
+
+
+
+
   @override
   Widget build(BuildContext context) {
+
+    Map quantities = document["quantity"];
+    List sizes = [];
+
+    for (var element in quantities.keys) {
+      sizes.add(element);
+    }
+
+    var stringSizes = sizes.join(", ");
+
+
     return Container(
       decoration: const BoxDecoration(
         border: Border(
@@ -17,19 +32,24 @@ class ProductCard extends StatelessWidget {
           )
         )
       ),
-      height: 160,
+      height: 200,
       width: MediaQuery.of(context).size.width,
       child: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 8, left: 10, right: 10),
         child: Row(
           children: [
-            Material(
-              elevation: 5,
-              borderRadius: BorderRadius.circular(10),
-              child: SizedBox(
-                height: 140,
-                width: 130,
-                child: Image.network(document["productImage"]),
+            Expanded(
+              child: Material(
+                elevation: 5,
+                borderRadius: BorderRadius.circular(10),
+                child: SizedBox(
+                  height: 180,
+                  width: 150,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(document["productImage"]),
+                  ),
+                ),
               ),
             ),
             Padding(
@@ -41,9 +61,9 @@ class ProductCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Brand", style: TextStyle(fontSize: 10),),
+                      Text(document["brand"], style: const TextStyle(fontSize: 10),),
                       const SizedBox(height: 6,),
-                      const Text("Products", style: TextStyle(fontWeight: FontWeight.bold),),
+                      Text(document["productName"], style: const TextStyle(fontWeight: FontWeight.bold),),
                       const SizedBox(height: 6,),
                       Container(
                         width: MediaQuery.of(context).size.width - 160,
@@ -53,7 +73,7 @@ class ProductCard extends StatelessWidget {
                             color: Colors.grey[200]
                         ),
                         child: Text(
-                          "1 Kg",
+                          "Gender: ${document['gender']}",
                           style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -61,26 +81,27 @@ class ProductCard extends StatelessWidget {
                           ),),
                       ),
                       const SizedBox(height: 6,),
-                      Row(
-                        children: const [
-                          Text(
-                            "\$30",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "\$30",
-                            style: TextStyle(
-                              decoration: TextDecoration.lineThrough,
+                      Container(
+                        width: MediaQuery.of(context).size.width - 160,
+                        padding: const EdgeInsets.only(top: 10, bottom: 10, left: 6),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: Colors.grey[200]
+                        ),
+                        child: Text(
+                          "Available Sizes: $stringSizes",
+                          style: TextStyle(
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
+                              color: Colors.grey[600]
+                          ),),
+                      ),
+                      const SizedBox(height: 6,),
+                      Text(
+                        "Kshs. ${document["price"]}",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold
+                        ),
                       ),
                     ],
                   ),

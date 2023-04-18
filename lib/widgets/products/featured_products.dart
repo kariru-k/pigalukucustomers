@@ -15,7 +15,7 @@ class FeaturedProducts extends StatelessWidget {
 
 
     return FutureBuilder<QuerySnapshot>(
-      future: services.products.get(),
+      future: services.products.where("published", isEqualTo: true).where("collection", isEqualTo: "Featured Products").get(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
@@ -25,12 +25,20 @@ class FeaturedProducts extends StatelessWidget {
           return const Text("Loading");
         }
 
-        return ListView(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: snapshot.data!.docs.map((DocumentSnapshot document) {
-            return ProductCard(document: document);
-          }).toList(),
+        if (snapshot.data!.docs.isEmpty) {
+          return Container();
+        }
+
+        return Column(
+          children: [
+            ListView(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                return ProductCard(document: document);
+              }).toList(),
+            ),
+          ],
         );
       },
     );
