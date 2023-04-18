@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutterflow_paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:piga_luku_customers/constants.dart';
 import 'package:piga_luku_customers/services/store_services.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/store_provider.dart';
+import '../screens/vendor_home_screen.dart';
 
 class NearByStores extends StatefulWidget {
   const NearByStores({super.key});
@@ -48,7 +50,8 @@ class _NearByStoresState extends State<NearByStores> {
   @override
   Widget build(BuildContext context) {
 
-    // _storeData.getUserLocationData(context);
+    final storeData = Provider.of<StoreProvider>(context);
+    storeData.getUserLocationData(context);
 
     return Container(
       color: Colors.white,
@@ -149,68 +152,80 @@ class _NearByStoresState extends State<NearByStores> {
                       itemBuilder: (context, document, index){
                         final data = document[index].data() as Map?;
                         if(double.parse(getDistance(data!['location'])) <= 5){
-                          return Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 100,
-                                    width: 110,
-                                    child: Card(
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(4.0),
-                                          child: CachedNetworkImage(
-                                            imageUrl: data['url'],
-                                            fit: BoxFit.cover,
-                                          ),
-                                        )
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10,),
-                                  Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        data["shopName"],
-                                        style: storeCardStyle,
-                                        maxLines: 3,
-                                        overflow: TextOverflow.ellipsis,
+                          return InkWell(
+                            onTap: () {
+                              storeData.getSelectedStore(document[index], getDistance(data['location']));
+                              PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                  context,
+                                  screen: VendorHomeScreen(documentid: data["uid"],),
+                                  withNavBar: false,
+                                  settings: const RouteSettings(name: VendorHomeScreen.id),
+                                  pageTransitionAnimation: PageTransitionAnimation.fade
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 100,
+                                      width: 110,
+                                      child: Card(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(4.0),
+                                            child: CachedNetworkImage(
+                                              imageUrl: data['url'],
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
                                       ),
-                                      const SizedBox(height: 3,),
-                                      Text(data["description"], style: storeDialogCardStyle,),
-                                      const SizedBox(height: 3,),
-                                      SizedBox(
-                                        width: MediaQuery.of(context).size.width - 250,
-                                        child: Text(
-                                          data["address"],
+                                    ),
+                                    const SizedBox(width: 10,),
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          data["shopName"],
+                                          style: storeCardStyle,
+                                          maxLines: 3,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                      const SizedBox(height: 3,),
-                                      Text(
-                                        "${getDistance(data["location"])}km",
-                                      ),
-                                      const SizedBox(height: 3,),
-                                      Row(
-                                        children: const [
-                                          Icon(
-                                            Icons.star,
-                                            size: 12,
-                                            color: Colors.grey,
+                                        const SizedBox(height: 3,),
+                                        Text(data["description"], style: storeDialogCardStyle,),
+                                        const SizedBox(height: 3,),
+                                        SizedBox(
+                                          width: MediaQuery.of(context).size.width - 250,
+                                          child: Text(
+                                            data["address"],
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          SizedBox(
-                                            width: 4,
-                                          ),
-                                          Text("4.5", style: storeCardStyle,)
-                                        ],
-                                      )
-                                    ],
-                                  )
-                                ],
+                                        ),
+                                        const SizedBox(height: 3,),
+                                        Text(
+                                          "${getDistance(data["location"])}km",
+                                        ),
+                                        const SizedBox(height: 3,),
+                                        Row(
+                                          children: const [
+                                            Icon(
+                                              Icons.star,
+                                              size: 12,
+                                              color: Colors.grey,
+                                            ),
+                                            SizedBox(
+                                              width: 4,
+                                            ),
+                                            Text("4.5", style: storeCardStyle,)
+                                          ],
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           );

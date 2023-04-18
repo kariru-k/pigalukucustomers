@@ -19,7 +19,7 @@ class StoreProvider with ChangeNotifier{
   String? distance;
 
 
-  getSelectedStore(storeDetails, distance){
+  getSelectedStore(DocumentSnapshot? storeDetails, distance){
     storedetails = storeDetails;
     this.distance = distance;
     notifyListeners();

@@ -151,7 +151,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         child: ElevatedButton(
                                           onPressed: () {
                                             locationData.getCurrentPosition();
-                                            print(locationData.longitude);
                                             setState(() {
                                               auth.loading = true;
                                               auth.screen = "MapScreen";

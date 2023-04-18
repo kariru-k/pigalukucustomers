@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:piga_luku_customers/providers/auth_providers.dart';
-import 'package:piga_luku_customers/providers/location_provider.dart';
 
 import 'package:piga_luku_customers/widgets/near_by_store.dart';
 import 'package:piga_luku_customers/widgets/top_pick_store.dart';
 import 'package:piga_luku_customers/widgets/image_slider.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widgets/my_appbar.dart';
@@ -45,8 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context);
-    final locationData = Provider.of<LocationProvider>(context);
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: NestedScrollView(

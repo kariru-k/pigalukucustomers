@@ -3,6 +3,7 @@ import 'package:piga_luku_customers/widgets/vendor_appbar.dart';
 import 'package:piga_luku_customers/widgets/vendor_banner.dart';
 
 import '../widgets/categories_widget.dart';
+import '../widgets/products/featured_products.dart';
 
 class VendorHomeScreen extends StatelessWidget {
   static const String id = "vendor-screen";
@@ -21,10 +22,13 @@ class VendorHomeScreen extends StatelessWidget {
               const VendorAppBar(),
             ];
           },
-          body: Column(
+          body: ListView(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
             children: [
               VendorBanner(userid: documentid,),
-              const Expanded(child: VendorCategories())
+              const VendorCategories(),
+              const FeaturedProducts(),
             ],
           )
       ),

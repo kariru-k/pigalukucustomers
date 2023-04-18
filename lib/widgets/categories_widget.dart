@@ -23,11 +23,11 @@ class _VendorCategoriesState extends State<VendorCategories> {
         .collection("products").where("seller.sellerUid", isEqualTo: store.storedetails!["uid"])
         .get()
         .then((QuerySnapshot querySnapshot){
-          querySnapshot.docs.forEach((doc) {
+          for (var doc in querySnapshot.docs) {
             setState(() {
               _catList.add(doc["category.categoryName"]);
             });
-          });
+          }
     })
     ;
     super.didChangeDependencies();
@@ -48,7 +48,7 @@ class _VendorCategoriesState extends State<VendorCategories> {
 
         if (_catList.isEmpty) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: Text("There are currently no categories to show you"),
           );
         }
 
