@@ -15,14 +15,16 @@ class BestSellingProducts extends StatelessWidget {
 
 
     return FutureBuilder<QuerySnapshot>(
-      future: services.products.where("published", isEqualTo: true).where("collection", isEqualTo: "Best Selling").get(),
+      future: services.products.where("published", isEqualTo: true).where("collection", isEqualTo: "Best Selling").orderBy("productName").limitToLast(10).get(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("Loading");
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
 
         if (snapshot.data!.docs.isEmpty) {
@@ -56,7 +58,7 @@ class BestSellingProducts extends StatelessWidget {
                           ],
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 30
+                          fontSize: 20
                       ),
                     ),
                   ),

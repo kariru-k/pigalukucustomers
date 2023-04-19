@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:piga_luku_customers/providers/store_provider.dart';
+import 'package:piga_luku_customers/screens/product_list_screen.dart';
 import 'package:piga_luku_customers/services/product_services.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +39,11 @@ class _VendorCategoriesState extends State<VendorCategories> {
 
   @override
   Widget build(BuildContext context) {
+
+    var storeprovider = Provider.of<StoreProvider>(context);
+
+
+
     return FutureBuilder(
       future: services.category.get(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
@@ -102,27 +109,39 @@ class _VendorCategoriesState extends State<VendorCategories> {
                 children: snapshot.data!.docs.map((DocumentSnapshot document){
                   return _catList.contains(document["name"])
                       ?
-                      SizedBox(
-                        width: 120,
-                        height: 150,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.grey,
-                              width: .5
-                            )
-                          ),
-                          child: Column(
-                            children: [
-                              Center(
-                                child: Image.network(document["image"]),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                                child: Text(document["name"], textAlign: TextAlign.center,),
+                      InkWell(
+                        onTap: () {
+                          storeprovider.selectedCategory(document["name"]);
+                          PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                              context,
+                              screen: const ProductListScreen(),
+                              withNavBar: false,
+                              settings: const RouteSettings(name: ProductListScreen.id),
+                              pageTransitionAnimation: PageTransitionAnimation.fade
+                          );
+                        },
+                        child: SizedBox(
+                          width: 120,
+                          height: 150,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: .5
                               )
-                            ],
+                            ),
+                            child: Column(
+                              children: [
+                                Center(
+                                  child: Image.network(document["image"]),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                  child: Text(document["name"], textAlign: TextAlign.center,),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       )
