@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:piga_luku_customers/widgets/products/best_selling_products.dart';
+import 'package:piga_luku_customers/widgets/products/recently_added_products.dart';
 import 'package:piga_luku_customers/widgets/vendor_appbar.dart';
 import 'package:piga_luku_customers/widgets/vendor_banner.dart';
 
@@ -28,7 +30,9 @@ class VendorHomeScreen extends StatelessWidget {
             children: [
               VendorBanner(userid: documentid,),
               const VendorCategories(),
+              const RecentlyAddedProducts(),
               const FeaturedProducts(),
+              const BestSellingProducts(),
             ],
           )
       ),

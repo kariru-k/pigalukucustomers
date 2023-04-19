@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/services/product_services.dart';
 import 'package:piga_luku_customers/widgets/products/product_card_widget.dart';
 
-class FeaturedProducts extends StatelessWidget {
-  const FeaturedProducts({Key? key}) : super(key: key);
+class BestSellingProducts extends StatelessWidget {
+  const BestSellingProducts({Key? key}) : super(key: key);
 
 
 
@@ -15,7 +15,7 @@ class FeaturedProducts extends StatelessWidget {
 
 
     return FutureBuilder<QuerySnapshot>(
-      future: services.products.where("published", isEqualTo: true).where("collection", isEqualTo: "Featured Products").get(),
+      future: services.products.where("published", isEqualTo: true).where("collection", isEqualTo: "Best Selling").get(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
@@ -40,12 +40,12 @@ class FeaturedProducts extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: Colors.teal[100],
-                    borderRadius: BorderRadius.circular(4)
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(4)
                   ),
                   child: const Center(
                     child: Text(
-                      "Featured Products",
+                      "Best Selling Products",
                       style: TextStyle(
                           shadows: <Shadow> [
                             Shadow(
