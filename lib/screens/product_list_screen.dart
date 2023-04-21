@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/providers/store_provider.dart';
+import 'package:piga_luku_customers/widgets/products/product_filter_widget.dart';
 import 'package:piga_luku_customers/widgets/products/product_list.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,18 @@ class ProductListScreen extends StatelessWidget {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
             SliverAppBar(
+              backgroundColor: Theme.of(context).primaryColor,
+              floating: true,
+              snap: true,
+              expandedHeight: 110,
+              flexibleSpace: Padding(
+                padding: const EdgeInsets.only(top: 80),
+                child: Container(
+                  height: 56,
+                  color: Colors.pinkAccent,
+                  child: const ProductFilterWidget(),
+                ),
+              ),
               title: Text(
                 storeProvider.selectedProductCategory.toString(),
                 style: const TextStyle(

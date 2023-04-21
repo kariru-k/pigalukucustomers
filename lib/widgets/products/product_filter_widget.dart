@@ -55,7 +55,7 @@ class _ProductFilterWidgetState extends State<ProductFilterWidget> {
         Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
         return Container(
             height: 75,
-            color: Colors.grey,
+            color: Colors.black45,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
@@ -81,7 +81,7 @@ class _ProductFilterWidgetState extends State<ProductFilterWidget> {
                       padding: const EdgeInsets.only(left: 8.0),
                       child: _subCatList.contains(data["subCat"][index]["name"]) ? ActionChip(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)
+                          borderRadius: BorderRadius.circular(5)
                         ),
                         elevation: 4,
                         label: Text("${data["subCat"][index]["name"]}"),

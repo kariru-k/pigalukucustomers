@@ -112,6 +112,7 @@ class _VendorCategoriesState extends State<VendorCategories> {
                       InkWell(
                         onTap: () {
                           storeprovider.selectedCategory(document["name"]);
+                          storeprovider.selectedsubCategory(null);
                           PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                               context,
                               screen: const ProductListScreen(),

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/services/product_services.dart';
 import 'package:piga_luku_customers/widgets/products/product_card_widget.dart';
-import 'package:piga_luku_customers/widgets/products/product_filter_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/store_provider.dart';
@@ -53,7 +52,6 @@ class _ProductListState extends State<ProductList> {
 
         return Column(
           children: [
-            const ProductFilterWidget(),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
