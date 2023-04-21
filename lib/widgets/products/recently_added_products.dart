@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/services/product_services.dart';
 import 'package:piga_luku_customers/widgets/products/product_card_widget.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/store_provider.dart';
 
 class RecentlyAddedProducts extends StatelessWidget {
   const RecentlyAddedProducts({Key? key}) : super(key: key);
@@ -13,18 +16,24 @@ class RecentlyAddedProducts extends StatelessWidget {
 
     ProductServices services = ProductServices();
 
+    var store = Provider.of<StoreProvider>(context);
+
 
     return FutureBuilder<QuerySnapshot>(
-      future: services.products.where("published", isEqualTo: true).where("collection", isEqualTo: "Recently Added").orderBy("productName").limitToLast(10).get(),
+      future: services.products
+          .where("published", isEqualTo: true)
+          .where("collection", isEqualTo: "Recently Added")
+          .where("seller.sellerUid", isEqualTo: store.storedetails!["uid"])
+          .orderBy("productName")
+          .limitToLast(10)
+          .get(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
         }
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+        if (!snapshot.hasData) {
+          return Container();
         }
 
         if (snapshot.data!.docs.isEmpty) {

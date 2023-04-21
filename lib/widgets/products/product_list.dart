@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/services/product_services.dart';
 import 'package:piga_luku_customers/widgets/products/product_card_widget.dart';
+import 'package:piga_luku_customers/widgets/products/product_filter_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/store_provider.dart';
@@ -26,7 +27,12 @@ class _ProductListState extends State<ProductList> {
 
 
     Future<QuerySnapshot<Object?>>? myFuture(){
-      return services.products.where("published", isEqualTo: true).where("category.categoryName", isEqualTo: storeprovider.selectedProductCategory).get();
+      return services.products
+          .where("published", isEqualTo: true)
+          .where("category.categoryName", isEqualTo: storeprovider.selectedProductCategory)
+          .where("category.subCategoryName", isEqualTo: storeprovider.selectedSubProductCategory)
+          .where("seller.sellerUid", isEqualTo: storeprovider.storedetails!["uid"])
+          .get();
     }
 
     _future = myFuture();
@@ -38,75 +44,16 @@ class _ProductListState extends State<ProductList> {
           return const Text('Something went wrong');
         }
 
-        if (snapshot.data!.docs.isEmpty) {
-          return Container();
+
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
 
         return Column(
           children: [
-            Container(
-              height: 50,
-              color: Colors.grey,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                      child: Chip(
-                        label: const Text("Sub Category"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)
-                        ),
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                      child: Chip(
-                        label: const Text("Sub Category"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)
-                        ),
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                      child: Chip(
-                        label: const Text("Sub Category"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)
-                        ),
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                      child: Chip(
-                        label: const Text("Sub Category"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)
-                        ),
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                      child: Chip(
-                        label: const Text("Sub Category"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)
-                        ),
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            const ProductFilterWidget(),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(

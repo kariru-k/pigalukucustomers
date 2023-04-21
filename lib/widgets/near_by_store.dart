@@ -21,26 +21,10 @@ class NearByStores extends StatefulWidget {
 
 class _NearByStoresState extends State<NearByStores> {
 
-  double? latitude;
-  double? longitude;
-
-  @override
-  void didChangeDependencies(){
-    super.didChangeDependencies();
-    final storeData = Provider.of<StoreProvider>(context);
-    storeData.determinePosition().then((position){
-      setState(() {
-        latitude = position.latitude;
-        longitude = position.longitude;
-      });
-    });
-  }
 
 
-  String getDistance(location){
-    var distance = Geolocator.distanceBetween(latitude as double, longitude as double, location.latitude, location.longitude);
-    return (distance / 1000).toStringAsFixed(2);
-  }
+
+
 
   final StoreServices _storeServices = StoreServices();
 
@@ -53,6 +37,16 @@ class _NearByStoresState extends State<NearByStores> {
     final storeData = Provider.of<StoreProvider>(context);
     storeData.getUserLocationData(context);
 
+    String getDistance(location){
+      var distance = Geolocator.distanceBetween(
+          storeData.userLatitude as double,
+          storeData.userLongitude as double,
+          location.latitude,
+          location.longitude
+      );
+      return (distance / 1000).toStringAsFixed(2);
+    }
+
     return Container(
       color: Colors.white,
       child: StreamBuilder<QuerySnapshot>(
@@ -62,7 +56,12 @@ class _NearByStoresState extends State<NearByStores> {
 
             List shopDistance = [];
             for (int i = 0; i <= snapshot.data!.docs.length-1; i++){
-              var distance = Geolocator.distanceBetween(latitude as double, longitude as double, snapshot.data!.docs[i]['location'].latitude, snapshot.data!.docs[i]['location'].longitude);
+              var distance = Geolocator.distanceBetween(
+                  storeData.userLatitude as double,
+                  storeData.userLongitude as double,
+                  snapshot.data!.docs[i]['location'].latitude,
+                  snapshot.data!.docs[i]['location'].longitude
+              );
               var distanceInKm = distance / 1000;
               shopDistance.add(distanceInKm);
             }

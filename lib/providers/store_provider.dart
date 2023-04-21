@@ -16,6 +16,7 @@ class StoreProvider with ChangeNotifier{
   DocumentSnapshot? storedetails;
   String? distance;
   String? selectedProductCategory;
+  String? selectedSubProductCategory;
 
 
   getSelectedStore(DocumentSnapshot? storeDetails, distance){
@@ -26,6 +27,11 @@ class StoreProvider with ChangeNotifier{
 
   selectedCategory(category){
     selectedProductCategory = category;
+    notifyListeners();
+  }
+
+  selectedsubCategory(subcategory){
+    selectedSubProductCategory = subcategory;
     notifyListeners();
   }
 
