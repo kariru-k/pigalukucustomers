@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:piga_luku_customers/screens/product_details_screen.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({Key? key, required this.document}) : super(key: key);
@@ -44,12 +46,26 @@ class ProductCard extends StatelessWidget {
                   child: Material(
                     elevation: 5,
                     borderRadius: BorderRadius.circular(10),
-                    child: SizedBox(
-                      height: 180,
-                      width: 150,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(document["productImage"]),
+                    child: InkWell(
+                      onTap: () {
+                        PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                            context,
+                            screen: ProductDetailsScreen(document: document),
+                            withNavBar: false,
+                            settings: const RouteSettings(name: ProductDetailsScreen.id),
+                            pageTransitionAnimation: PageTransitionAnimation.fade
+                        );
+                      },
+                      child: SizedBox(
+                        height: 180,
+                        width: 150,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Hero(
+                              tag: "product",
+                              child: Image.network(document["productImage"], fit: BoxFit.fill,)
+                          ),
+                        ),
                       ),
                     ),
                   ),

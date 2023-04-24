@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:piga_luku_customers/firebase_options.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
@@ -10,6 +11,7 @@ import 'package:piga_luku_customers/screens/login_screen.dart';
 import 'package:piga_luku_customers/screens/main_screen.dart';
 import 'package:piga_luku_customers/screens/map_screen.dart';
 import 'package:piga_luku_customers/screens/onboard_screen.dart';
+import 'package:piga_luku_customers/screens/product_details_screen.dart';
 import 'package:piga_luku_customers/screens/product_list_screen.dart';
 import 'package:piga_luku_customers/screens/register_screen.dart';
 import 'package:piga_luku_customers/screens/splash_screen.dart';
@@ -64,8 +66,10 @@ class MyApp extends StatelessWidget {
         MapScreen.id:(context)=> const MapScreen(),
         MainScreen.id:(context)=> const MainScreen(),
         VendorHomeScreen.id:(context) => VendorHomeScreen(documentid: user!.uid,),
-        ProductListScreen.id:(context) => const ProductListScreen()
+        ProductListScreen.id:(context) => const ProductListScreen(),
+        ProductDetailsScreen.id:(context) => const ProductDetailsScreen(document: null,),
       },
+      builder: EasyLoading.init(),
     );
   }
 }
