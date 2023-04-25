@@ -18,11 +18,11 @@ class _ProductFilterWidgetState extends State<ProductFilterWidget> {
 
   @override
   void didChangeDependencies() {
-    var _store = Provider.of<StoreProvider>(context);
+    var store = Provider.of<StoreProvider>(context);
 
     FirebaseFirestore.instance
         .collection("products")
-        .where("category.categoryName", isEqualTo: _store.selectedProductCategory)
+        .where("category.categoryName", isEqualTo: store.selectedProductCategory)
         .get()
         .then((QuerySnapshot querySnapshot) => {
           querySnapshot.docs.forEach((doc){

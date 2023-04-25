@@ -41,9 +41,7 @@ class CartServices{
 
       // Return the new count
       return quantity;
-    })
-        .then((value) => print("Product cart count updated to $value"))
-        .catchError((error) => print("Failed to update cart products: $error"));
+    });
   }
 
   Future<void>removeFromCart(docId) async {

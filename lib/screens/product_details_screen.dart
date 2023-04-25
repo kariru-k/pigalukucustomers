@@ -124,7 +124,6 @@ class ProductDetailsScreen extends StatelessWidget {
   Future<void>saveForLater(){
     CollectionReference favourite = FirebaseFirestore.instance.collection("favourites");
     User? user = FirebaseAuth.instance.currentUser;
-    print(document!.data());
     return favourite.add(
         {
           "product": document!.data(),

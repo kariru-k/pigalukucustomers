@@ -15,14 +15,14 @@ class BestSellingProducts extends StatelessWidget {
 
     ProductServices services = ProductServices();
 
-    var _store = Provider.of<StoreProvider>(context);
+    var store = Provider.of<StoreProvider>(context);
 
 
     return FutureBuilder<QuerySnapshot>(
       future: services.products
           .where("published", isEqualTo: true)
           .where("collection", isEqualTo: "Best Selling")
-          .where("seller.sellerUid", isEqualTo: _store.storedetails!["uid"])
+          .where("seller.sellerUid", isEqualTo: store.storedetails!["uid"])
           .orderBy("productName")
           .limitToLast(10)
           .get(),

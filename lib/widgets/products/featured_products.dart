@@ -16,7 +16,7 @@ class FeaturedProducts extends StatelessWidget {
 
     ProductServices services = ProductServices();
 
-    var _store = Provider.of<StoreProvider>(context);
+    var store = Provider.of<StoreProvider>(context);
 
 
 
@@ -24,7 +24,7 @@ class FeaturedProducts extends StatelessWidget {
       future: services.products
           .where("published", isEqualTo: true)
           .where("collection", isEqualTo: "Featured Products")
-          .where("seller.sellerUid", isEqualTo: _store.storedetails!["uid"])
+          .where("seller.sellerUid", isEqualTo: store.storedetails!["uid"])
           .orderBy("productName")
           .limitToLast(10)
           .get(),

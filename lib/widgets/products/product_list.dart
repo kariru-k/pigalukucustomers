@@ -22,7 +22,7 @@ class _ProductListState extends State<ProductList> {
 
     ProductServices services = ProductServices();
     var storeprovider = Provider.of<StoreProvider>(context);
-    late final Future<QuerySnapshot<Object?>>? _future;
+    late final Future<QuerySnapshot<Object?>>? future;
 
 
     Future<QuerySnapshot<Object?>>? myFuture(){
@@ -34,10 +34,10 @@ class _ProductListState extends State<ProductList> {
           .get();
     }
 
-    _future = myFuture();
+    future = myFuture();
 
     return FutureBuilder<QuerySnapshot>(
-      future: _future,
+      future: future,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
