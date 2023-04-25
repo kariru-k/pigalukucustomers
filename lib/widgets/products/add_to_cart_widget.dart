@@ -7,8 +7,9 @@ import 'package:piga_luku_customers/widgets/cart/counter_widget.dart';
 import '../../services/cart_services.dart';
 
 class AddToCartWidget extends StatefulWidget {
-  const AddToCartWidget({Key? key, required this.document}) : super(key: key);
+  const AddToCartWidget({Key? key, required this.document, required this.size}) : super(key: key);
   final DocumentSnapshot document;
+  final String? size;
 
   @override
   State<AddToCartWidget> createState() => _AddToCartWidgetState();
@@ -20,7 +21,7 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
   User? user = FirebaseAuth.instance.currentUser;
   bool _loading = true;
   bool _exist = false;
-  int quantity = 1;
+  int quantity = 0;
   String? docId;
 
 
@@ -34,7 +35,7 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
     final snapshot = await cart.cart.doc(user!.uid).collection('products').get();
     if (snapshot.docs.isEmpty) {
       setState(() {
-        _loading = false;
+        _loading = true;
       });
     } else {
       setState(() {
@@ -56,11 +57,16 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
         .then(
             (QuerySnapshot querySnapshot) {
               for (var doc in querySnapshot.docs) {
-                if (doc["productId"] == widget.document["productId"]) {
+                if (doc["productId"] == widget.document["productId"] && doc["size"] == widget.size) {
                   setState(() {
                     _exist = true;
                     quantity = doc["qty"];
                     docId = doc.id;
+                  });
+                  break;
+                } else {
+                  setState(() {
+                    _exist = false;
                   });
                 }
               }
@@ -79,18 +85,25 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
           valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
         ),
       ),
-    ) : _exist
-        ? CounterWidget(document: widget.document, quantity: quantity.toInt(), docId: docId.toString(),)
+    )
+        :
+    _exist
+        ?
+    CounterWidget(document: widget.document, quantity: quantity.toInt(), docId: docId.toString(), size: widget.size,)
         :
     InkWell(
       onTap: () {
-        EasyLoading.show(status: "Adding to Cart");
-        cart.addToCart(widget.document).then((value){
-          setState(() {
-            _exist = true;
+        if (widget.size != null) {
+          EasyLoading.show(status: "Adding to Cart");
+          cart.addToCart(widget.document, widget.size).then((value){
+            setState(() {
+              _exist = true;
+            });
+            EasyLoading.showSuccess("Added to Cart");
           });
-          EasyLoading.showSuccess("Added to Cart");
-        });
+        } else {
+          EasyLoading.showError("Please enter a Size", duration: const Duration(seconds: 5));
+        }
       },
       child: Container(
         height: 56,

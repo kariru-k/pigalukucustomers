@@ -5,10 +5,11 @@ import 'package:piga_luku_customers/services/cart_services.dart';
 import '../products/add_to_cart_widget.dart';
 
 class CounterWidget extends StatefulWidget {
-  const CounterWidget({Key? key, required this.document, required this.quantity, required this.docId}) : super(key: key);
+  const CounterWidget({Key? key, required this.document, required this.quantity, required this.docId, required this.size}) : super(key: key);
   final DocumentSnapshot document;
   final String docId;
   final int quantity;
+  final String? size;
 
   @override
   State<CounterWidget> createState() => _CounterWidgetState();
@@ -135,6 +136,6 @@ class _CounterWidgetState extends State<CounterWidget> {
           ),
         ),
       ),
-    ) : AddToCartWidget(document: widget.document,);
+    ) : AddToCartWidget(document: widget.document, size: widget.size,);
   }
 }

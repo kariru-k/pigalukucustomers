@@ -5,7 +5,7 @@ class CartServices{
   CollectionReference cart = FirebaseFirestore.instance.collection("cart");
   User? user = FirebaseAuth.instance.currentUser;
 
-  Future<void>addToCart(DocumentSnapshot document){
+  Future<void>addToCart(DocumentSnapshot document, String? size){
     cart.doc(user!.uid).set({
       'user': user!.uid,
       'sellerUid': document["seller.sellerUid"]
@@ -17,7 +17,8 @@ class CartServices{
       "gender": document['gender'],
       "price": document['price'],
       "itemCode": document['itemCode'],
-      "qty": 1
+      "qty": 1,
+      "size": size
     });
   }
 

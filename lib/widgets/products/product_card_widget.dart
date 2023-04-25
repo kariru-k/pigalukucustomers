@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:piga_luku_customers/screens/product_details_screen.dart';
 
+import '../cart/counter.dart';
+
 class ProductCard extends StatelessWidget {
   const ProductCard({Key? key, required this.document}) : super(key: key);
 
@@ -36,7 +38,7 @@ class ProductCard extends StatelessWidget {
               color: Colors.grey
             )
           ),
-          height: 200,
+          height: 250,
           width: MediaQuery.of(context).size.width,
           child: Padding(
             padding: const EdgeInsets.only(top: 8, bottom: 8, left: 10, right: 10),
@@ -62,7 +64,7 @@ class ProductCard extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Hero(
-                              tag: "product",
+                              tag: "product${document["productId"]}",
                               child: Image.network(document["productImage"], fit: BoxFit.fill,)
                           ),
                         ),
@@ -130,24 +132,11 @@ class ProductCard extends StatelessWidget {
                             width: MediaQuery.of(context).size.width - 160,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
-                              children: const [
-                                Card(
-                                  color: Colors.pink,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 30, right: 30, top: 7, bottom: 7),
-                                    child: Text(
-                                      "Add",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                              children: [
+                                Expanded(child: CounterForCard(sizes: sizes,)),
                               ],
                             ),
                           ),
-
                         ],
                       )
                     ],
