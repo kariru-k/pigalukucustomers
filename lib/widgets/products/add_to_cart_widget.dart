@@ -20,7 +20,7 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
   User? user = FirebaseAuth.instance.currentUser;
   bool _loading = true;
   bool _exist = false;
-  int? quantity;
+  int quantity = 1;
   String? docId;
 
 
@@ -80,12 +80,15 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
         ),
       ),
     ) : _exist
-        ? CounterWidget(document: widget.document, quantity: quantity!.toInt(), docId: docId.toString(),)
+        ? CounterWidget(document: widget.document, quantity: quantity.toInt(), docId: docId.toString(),)
         :
     InkWell(
       onTap: () {
         EasyLoading.show(status: "Adding to Cart");
         cart.addToCart(widget.document).then((value){
+          setState(() {
+            _exist = true;
+          });
           EasyLoading.showSuccess("Added to Cart");
         });
       },

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 class CartServices{
   CollectionReference cart = FirebaseFirestore.instance.collection("cart");
@@ -45,6 +44,17 @@ class CartServices{
     })
         .then((value) => print("Product cart count updated to $value"))
         .catchError((error) => print("Failed to update cart products: $error"));
+  }
+
+  Future<void>removeFromCart(docId) async {
+    cart.doc(user!.uid).collection("products").doc(docId).delete();
+  }
+
+  Future<void>checkData() async {
+    final snapshot = await cart.doc(user!.uid).collection("products").get();
+    if (snapshot.docs.isEmpty) {
+      cart.doc(user!.uid).delete();
+    }
   }
 
 }

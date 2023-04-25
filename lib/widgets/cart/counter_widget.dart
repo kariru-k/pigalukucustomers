@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/services/cart_services.dart';
 
+import '../products/add_to_cart_widget.dart';
+
 class CounterWidget extends StatefulWidget {
   const CounterWidget({Key? key, required this.document, required this.quantity, required this.docId}) : super(key: key);
   final DocumentSnapshot document;
@@ -15,6 +17,7 @@ class CounterWidget extends StatefulWidget {
 class _CounterWidgetState extends State<CounterWidget> {
   int? _qty;
   bool _updating = false;
+  bool _exists = true;
   CartServices cart = CartServices();
 
   @override
@@ -26,7 +29,7 @@ class _CounterWidgetState extends State<CounterWidget> {
 
 
 
-    return Container(
+    return _exists ? Container(
       margin: const EdgeInsets.only(
         left: 20,
         right: 20
@@ -44,7 +47,13 @@ class _CounterWidgetState extends State<CounterWidget> {
                       _updating = true;
                     });
                     if (_qty == 1) {
-
+                      cart.removeFromCart(widget.docId).then((value){
+                        setState(() {
+                          _updating = false;
+                          _exists = false;
+                        });
+                        cart.checkData();
+                      });
                     }
                     if (_qty! > 1) {
                       setState(() {
@@ -126,6 +135,6 @@ class _CounterWidgetState extends State<CounterWidget> {
           ),
         ),
       ),
-    );
+    ) : AddToCartWidget(document: widget.document,);
   }
 }
