@@ -133,7 +133,7 @@ class ProductCard extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Expanded(child: CounterForCard(sizes: sizes,)),
+                                Expanded(child: CounterForCard(sizes: sizes, document: document,)),
                               ],
                             ),
                           ),
