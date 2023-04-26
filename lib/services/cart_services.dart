@@ -8,7 +8,8 @@ class CartServices{
   Future<void>addToCart(DocumentSnapshot document, String? size){
     cart.doc(user!.uid).set({
       'user': user!.uid,
-      'sellerUid': document["seller.sellerUid"]
+      'sellerUid': document["seller.sellerUid"],
+      'shopName': document["seller.shopName"]
     });
 
     return cart.doc(user!.uid).collection("products").add({
@@ -55,5 +56,20 @@ class CartServices{
       cart.doc(user!.uid).delete();
     }
   }
+
+  Future<void>deleteCart() async {
+    await cart.doc(user!.uid).collection("products").get().then((snapshot){
+      for (DocumentSnapshot document in snapshot.docs){
+        document.reference.delete();
+      }
+    });
+  }
+
+  Future<String?>checkSeller() async {
+    final snapshot = await cart.doc(user!.uid).get();
+    return snapshot.exists ? snapshot["shopName"] : null;
+  }
+
+
 
 }

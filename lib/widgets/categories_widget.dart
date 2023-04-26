@@ -121,27 +121,36 @@ class _VendorCategoriesState extends State<VendorCategories> {
                               pageTransitionAnimation: PageTransitionAnimation.fade
                           );
                         },
-                        child: SizedBox(
-                          width: 120,
-                          height: 150,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: .5
-                              )
-                            ),
-                            child: Column(
-                              children: [
-                                Center(
-                                  child: Image.network(document["image"]),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                                  child: Text(document["name"], textAlign: TextAlign.center,),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 120,
+                            height: 150,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.pink[100],
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: .5
                                 )
-                              ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Image.network(document["image"], fit: BoxFit.fill, height: MediaQuery.of(context).size.height,),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                    child: Text(document["name"], textAlign: TextAlign.center,),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),

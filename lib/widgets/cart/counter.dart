@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:piga_luku_customers/services/cart_services.dart';
@@ -29,21 +30,26 @@ class CounterForCardState extends State<CounterForCard> {
         .collection('products')
         .where("productId", isEqualTo: widget.document["productId"])
         .get()
-        .then(
-            (QuerySnapshot querySnapshot) {
-          for (var doc in querySnapshot.docs) {
-            if (doc["productId"] == widget.document["productId"] && doc["size"] == dropdownValue) {
-              setState(() {
-                _exists = true;
-                _docId = doc.id;
-                _qty = doc["qty"];
-              });
-              break;
-            } else {
-              setState(() {
-                _exists = false;
-              });
+        .then((QuerySnapshot querySnapshot) {
+          if (querySnapshot.docs.isNotEmpty) {
+            for (var doc in querySnapshot.docs) {
+              if (doc["productId"] == widget.document["productId"] && doc["size"] == dropdownValue) {
+                setState(() {
+                  _exists = true;
+                  _docId = doc.id;
+                  _qty = doc["qty"];
+                });
+                break;
+              } else {
+                setState(() {
+                  _exists = false;
+                });
+              }
             }
+          } else {
+            setState(() {
+              _exists = false;
+            });
           }
         });
   }
@@ -87,7 +93,9 @@ class CounterForCardState extends State<CounterForCard> {
                       child: Text(
                         value,
                         style: const TextStyle(
-                            fontSize: 20
+                          fontSize: 20,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w900
                         ),
                       ),
                     );
@@ -200,8 +208,22 @@ class CounterForCardState extends State<CounterForCard> {
             onTap: (){
               if (dropdownValue != null) {
                 EasyLoading.show(status: "Adding To Cart");
-                cart.addToCart(widget.document, dropdownValue).then((value){
-                  EasyLoading.showSuccess("Added to Cart!");
+                cart.checkSeller().then((shopName){
+                  print(widget.document["seller.shopName"]);
+                  if (shopName == widget.document["seller.shopName"] || shopName == null) {
+                    setState(() {
+                      _exists = true;
+                    });
+                    cart.addToCart(widget.document, dropdownValue).then((value){
+                      EasyLoading.showSuccess("Added to Cart!");
+                    });
+                    return;
+                  } else {
+                    print("Another seller");
+                    EasyLoading.dismiss();
+                    showDialog(shopName: shopName);
+                    return;
+                  }
                 });
               } else {
                 EasyLoading.showError("Oops! Please add a particular size!", duration: const Duration(seconds: 5));              }
@@ -223,5 +245,35 @@ class CounterForCardState extends State<CounterForCard> {
         ),
       ],
     );
+  }
+
+  showDialog({shopName}){
+    showCupertinoDialog(context: context, builder: (BuildContext context){
+      return CupertinoAlertDialog(
+        title: const Text("Replace Old Cart Items With New Ones"),
+        content: Text("Your cart already Contains Items from $shopName. Add these new Items from ${widget.document["seller.shopName"]} and remove the old ones?"),
+        actions: [
+          TextButton(
+              onPressed: (){
+                Navigator.pop(context);
+              },
+              child: const Text("No", style: TextStyle(color: Colors.red))
+          ),
+          TextButton(
+              onPressed: (){
+                cart.deleteCart().then((value){
+                  cart.addToCart(widget.document, dropdownValue).then((value){
+                    setState(() {
+                      _exists = true;
+                    });
+                    Navigator.pop(context);
+                  });
+                });
+              },
+              child: Text("Yes", style: TextStyle(color: Theme.of(context).primaryColor))
+          ),
+        ],
+      );
+    });
   }
 }
