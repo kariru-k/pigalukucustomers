@@ -116,7 +116,7 @@ class _VendorCategoriesState extends State<VendorCategories> {
                           PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                               context,
                               screen: const ProductListScreen(),
-                              withNavBar: false,
+                              withNavBar: true,
                               settings: const RouteSettings(name: ProductListScreen.id),
                               pageTransitionAnimation: PageTransitionAnimation.fade
                           );

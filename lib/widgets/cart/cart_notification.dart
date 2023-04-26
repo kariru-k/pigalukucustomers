@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:piga_luku_customers/providers/cart_provider.dart';
+import 'package:piga_luku_customers/screens/cart_screen.dart';
 import 'package:piga_luku_customers/services/cart_services.dart';
 import 'package:provider/provider.dart';
 
@@ -39,16 +41,27 @@ class _CartNotificationState extends State<CartNotification> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  cartProvider.cartQuantity! > 1
-                      ?
-                  Text("${cartProvider.cartQuantity} Items", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),)
-                      :
-                  Text("${cartProvider.cartQuantity} Item", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                  Text("From ${document!["shopName"]}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                  Row(
+                    children: [
+                      Text("${cartProvider.cartQuantity} ${cartProvider.cartQuantity! > 1 ? "Items" : "Item"}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                      const Text("  |  ", style: TextStyle(color: Colors.white),),
+                      Text("Kshs. ${cartProvider.subTotal!.toStringAsFixed(0)}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                    ],
+                  ),
+                  Text("From ${document!["shopName"]}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                 ],
               ),
             ),
             InkWell(
+              onTap: () {
+                PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                    context,
+                    screen: CartScreen(document: document,),
+                    withNavBar: true,
+                    settings: const RouteSettings(name: CartScreen.id),
+                    pageTransitionAnimation: PageTransitionAnimation.fade
+                );
+              },
               child: Row(
                 children: const [
                   Text("View Cart", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),

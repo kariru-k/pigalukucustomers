@@ -118,7 +118,7 @@ class _TopPickStoreState extends State<TopPickStore> {
                             PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                                 context,
                                 screen: VendorHomeScreen(documentid: document["uid"],),
-                                withNavBar: false,
+                                withNavBar: true,
                                 settings: const RouteSettings(name: VendorHomeScreen.id),
                                 pageTransitionAnimation: PageTransitionAnimation.fade
                             );

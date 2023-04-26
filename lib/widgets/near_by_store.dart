@@ -157,7 +157,7 @@ class _NearByStoresState extends State<NearByStores> {
                               PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                                   context,
                                   screen: VendorHomeScreen(documentid: data["uid"],),
-                                  withNavBar: false,
+                                  withNavBar: true,
                                   settings: const RouteSettings(name: VendorHomeScreen.id),
                                   pageTransitionAnimation: PageTransitionAnimation.fade
                               );

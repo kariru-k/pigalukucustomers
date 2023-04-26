@@ -7,6 +7,7 @@ import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/cart_provider.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
 import 'package:piga_luku_customers/providers/store_provider.dart';
+import 'package:piga_luku_customers/screens/cart_screen.dart';
 import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:piga_luku_customers/screens/login_screen.dart';
 import 'package:piga_luku_customers/screens/main_screen.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
         OnBoardScreen.id:(context)=> const OnBoardScreen(),
         MapScreen.id:(context)=> const MapScreen(),
         MainScreen.id:(context)=> const MainScreen(),
+        CartScreen.id:(context)=> const CartScreen(document: null,),
         VendorHomeScreen.id:(context) => VendorHomeScreen(documentid: user!.uid,),
         ProductListScreen.id:(context) => const ProductListScreen(),
         ProductDetailsScreen.id:(context) => const ProductDetailsScreen(document: null,),
