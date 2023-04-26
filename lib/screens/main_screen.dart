@@ -5,6 +5,7 @@ import 'package:piga_luku_customers/screens/favourite_screen.dart';
 import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:piga_luku_customers/screens/my_orders_screen.dart';
 import 'package:piga_luku_customers/screens/profile_screen.dart';
+import 'package:piga_luku_customers/widgets/cart/cart_notification.dart';
 
 class MainScreen extends StatelessWidget {
   static const String id = 'main-screen';
@@ -58,11 +59,16 @@ class MainScreen extends StatelessWidget {
 
 
     return Scaffold(
+      floatingActionButton: const Padding(
+        padding: EdgeInsets.only(bottom: 56),
+        child: CartNotification(),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: PersistentTabView(
           context,
           controller: controller,
           screens: _buildScreens(),
-          navBarHeight: 50,
+          navBarHeight: 56,
           items: _navBarsItems(),
           confineInSafeArea: true,
           backgroundColor: Colors.white, // Default is Colors.white.

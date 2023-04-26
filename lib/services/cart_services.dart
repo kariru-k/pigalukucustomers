@@ -19,11 +19,12 @@ class CartServices{
       "price": document['price'],
       "itemCode": document['itemCode'],
       "qty": 1,
-      "size": size
+      "size": size,
+      "total": document["price"]
     });
   }
 
-  Future<void>updateCartQuantity(docId, quantity) async {
+  Future<void>updateCartQuantity(docId, quantity, total) async {
     DocumentReference documentReference = FirebaseFirestore.instance
         .collection('cart')
         .doc(user!.uid)
@@ -39,7 +40,10 @@ class CartServices{
       }
 
       // Perform an update on the document
-      transaction.update(documentReference, {'qty': quantity});
+      transaction.update(documentReference, {
+        'qty': quantity,
+        "total": total
+      });
 
       // Return the new count
       return quantity;
@@ -69,6 +73,8 @@ class CartServices{
     final snapshot = await cart.doc(user!.uid).get();
     return snapshot.exists ? snapshot["shopName"] : null;
   }
+
+
 
 
 

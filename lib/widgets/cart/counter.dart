@@ -145,12 +145,13 @@ class CounterForCardState extends State<CounterForCard> {
                           setState(() {
                             _qty = (_qty- 1);
                           });
-                        }
-                        cart.updateCartQuantity(_docId, _qty).then((value){
-                          setState(() {
-                            _updating = false;
+                          var total = _qty * widget.document["price"];
+                          cart.updateCartQuantity(_docId, _qty, total).then((value){
+                            setState(() {
+                              _updating = false;
+                            });
                           });
-                        });
+                        }
                       },
                       child: Icon(
                         _qty == 1 ? Icons.delete_outline : Icons.remove,
@@ -185,7 +186,8 @@ class CounterForCardState extends State<CounterForCard> {
                         _qty = (_qty + 1);
                         _updating = true;
                       });
-                      cart.updateCartQuantity(_docId, _qty).then((value){
+                      var total = _qty * widget.document["price"];
+                      cart.updateCartQuantity(_docId, _qty, total).then((value){
                         setState(() {
                           _updating = false;
                         });
@@ -209,7 +211,6 @@ class CounterForCardState extends State<CounterForCard> {
               if (dropdownValue != null) {
                 EasyLoading.show(status: "Adding To Cart");
                 cart.checkSeller().then((shopName){
-                  print(widget.document["seller.shopName"]);
                   if (shopName == widget.document["seller.shopName"] || shopName == null) {
                     setState(() {
                       _exists = true;
@@ -219,7 +220,6 @@ class CounterForCardState extends State<CounterForCard> {
                     });
                     return;
                   } else {
-                    print("Another seller");
                     EasyLoading.dismiss();
                     showDialog(shopName: shopName);
                     return;

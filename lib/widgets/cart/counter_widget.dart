@@ -60,12 +60,13 @@ class _CounterWidgetState extends State<CounterWidget> {
                       setState(() {
                         _qty = (_qty! - 1);
                       });
-                    }
-                    cart.updateCartQuantity(widget.docId, _qty).then((value){
-                      setState(() {
-                        _updating = false;
+                      var total = _qty! * widget.document["price"];
+                      cart.updateCartQuantity(widget.docId, _qty, total).then((value){
+                        setState(() {
+                          _updating = false;
+                        });
                       });
-                    });
+                    }
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -110,7 +111,8 @@ class _CounterWidgetState extends State<CounterWidget> {
                       _qty = (_qty! + 1);
                       _updating = true;
                     });
-                    cart.updateCartQuantity(widget.docId, _qty).then((value){
+                    var total = _qty! * widget.document["price"];
+                    cart.updateCartQuantity(widget.docId, _qty, total).then((value){
                       setState(() {
                         _updating = false;
                       });
