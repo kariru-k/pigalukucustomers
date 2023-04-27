@@ -53,7 +53,6 @@ class _CounterWidgetState extends State<CounterWidget> {
                           _updating = false;
                           _exists = false;
                         });
-                        cart.checkData();
                       });
                     }
                     if (_qty! > 1) {

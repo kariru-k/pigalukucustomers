@@ -33,6 +33,7 @@ class VendorHomeScreen extends StatelessWidget {
               const RecentlyAddedProducts(),
               const FeaturedProducts(),
               const BestSellingProducts(),
+              const SizedBox(height: 30,)
             ],
           )
       ),

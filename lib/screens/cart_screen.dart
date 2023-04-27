@@ -1,6 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:piga_luku_customers/providers/cart_provider.dart';
+import 'package:piga_luku_customers/services/store_services.dart';
+import 'package:piga_luku_customers/widgets/cart/cart_list.dart';
 import 'package:provider/provider.dart';
 
 class CartScreen extends StatefulWidget {
@@ -13,6 +16,19 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  StoreServices store = StoreServices();
+  DocumentSnapshot? doc;
+
+
+  @override
+  void initState() {
+    store.getShopDetails(widget.document!["sellerUid"]).then((value){
+      doc = value;
+    });
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var cartProvider = Provider.of<CartProvider>(context);
@@ -78,7 +94,7 @@ class _CartScreenState extends State<CartScreen> {
                           style: const TextStyle(fontSize: 10, color: Colors.grey),
                         ),
                         Text(
-                          "To Pay: ${cartProvider.subTotal!.toStringAsFixed(0)}",
+                          " To Pay: Kshs. ${cartProvider.subTotal!.toStringAsFixed(0)}",
                           style: const TextStyle(fontSize: 10, color: Colors.grey),
                         ),
                       ],
@@ -88,8 +104,32 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ];
           },
-          body: const Center(
-            child: Text("Cart Screen"),
+          body: Column(
+            children: [
+              ListTile(
+                leading: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: CachedNetworkImage(
+                      imageUrl: doc!["url"],
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                title: Text(doc!["shopName"]),
+                subtitle: Text(
+                  doc!["address"],
+                  maxLines: 1,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey
+                  ),
+                ),
+              ),
+              CartList(document: widget.document,)
+            ],
           )
       )
     );

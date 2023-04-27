@@ -21,11 +21,6 @@ class NearByStores extends StatefulWidget {
 
 class _NearByStoresState extends State<NearByStores> {
 
-
-
-
-
-
   final StoreServices _storeServices = StoreServices();
 
   final PaginateRefreshedChangeListener _refreshedChangeListener = PaginateRefreshedChangeListener();
@@ -75,9 +70,6 @@ class _NearByStoresState extends State<NearByStores> {
                 )),
               );
             }
-
-
-
 
             return Padding(
               padding: const EdgeInsets.only(left: 8.0, right: 8.0),
@@ -159,7 +151,6 @@ class _NearByStoresState extends State<NearByStores> {
                                   screen: VendorHomeScreen(documentid: data["uid"],),
                                   withNavBar: true,
                                   settings: const RouteSettings(name: VendorHomeScreen.id),
-                                  pageTransitionAnimation: PageTransitionAnimation.fade
                               );
                             },
                             child: Padding(

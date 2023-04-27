@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -150,7 +151,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Hero(tag: '${widget.document!["productName"]}',child: Image.network(widget.document!["productImage"])),
+              child: Hero(tag: '${widget.document!["productName"]}',child: CachedNetworkImage(imageUrl: widget.document!["productImage"])),
             ),
             Divider(color: Colors.grey[300], thickness: 6,),
             const Padding(

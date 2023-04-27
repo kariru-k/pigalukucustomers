@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -55,7 +56,6 @@ class ProductCard extends StatelessWidget {
                             screen: ProductDetailsScreen(document: document),
                             withNavBar: true,
                             settings: const RouteSettings(name: ProductDetailsScreen.id),
-                            pageTransitionAnimation: PageTransitionAnimation.fade
                         );
                       },
                       child: SizedBox(
@@ -65,7 +65,7 @@ class ProductCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                           child: Hero(
                               tag: "product${document["productId"]}",
-                              child: Image.network(document["productImage"], fit: BoxFit.fill,)
+                              child: CachedNetworkImage(imageUrl: document["productImage"], fit: BoxFit.fill,)
                           ),
                         ),
                       ),

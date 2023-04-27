@@ -18,7 +18,7 @@ class MainScreen extends StatelessWidget {
 
     controller = PersistentTabController(initialIndex: 0);
 
-    List<Widget> _buildScreens() {
+    List<Widget> buildScreens() {
       return [
         const HomeScreen(),
         const FavouritesScreen(),
@@ -27,10 +27,10 @@ class MainScreen extends StatelessWidget {
       ];
     }
 
-    List<PersistentBottomNavBarItem> _navBarsItems() {
+    List<PersistentBottomNavBarItem> navBarsItems() {
       return [
         PersistentBottomNavBarItem(
-          icon: Image.asset("images/pigaluku_logo.png"),
+          icon: const Icon(CupertinoIcons.home),
           title: ("Home"),
           activeColorPrimary: Theme.of(context).primaryColor,
           inactiveColorPrimary: CupertinoColors.systemGrey,
@@ -67,9 +67,9 @@ class MainScreen extends StatelessWidget {
       body: PersistentTabView(
           context,
           controller: controller,
-          screens: _buildScreens(),
+          screens: buildScreens(),
           navBarHeight: 56,
-          items: _navBarsItems(),
+          items: navBarsItems(),
           confineInSafeArea: true,
           backgroundColor: Colors.white, // Default is Colors.white.
           handleAndroidBackButtonPress: true, // Default is true.
@@ -85,15 +85,6 @@ class MainScreen extends StatelessWidget {
           ),
           popAllScreensOnTapOfSelectedTab: true,
           popActionScreens: PopActionScreensType.all,
-          itemAnimationProperties: const ItemAnimationProperties( // Navigation Bar's items animation properties.
-            duration: Duration(milliseconds: 200),
-            curve: Curves.ease,
-          ),
-          screenTransitionAnimation: const ScreenTransitionAnimation( // Screen transition animation on change of selected tab.
-            animateTabTransition: true,
-            curve: Curves.ease,
-            duration: Duration(milliseconds: 200),
-          ),
           navBarStyle: NavBarStyle.style1, // Choose the nav bar style with this property.
       ),
     );

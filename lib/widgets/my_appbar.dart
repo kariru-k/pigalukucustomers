@@ -105,7 +105,6 @@ class _MyAppBarState extends State<MyAppBar> {
                           screen: const MapScreen(),
                           withNavBar: true,
                           settings: const RouteSettings(name: MapScreen.id),
-                          pageTransitionAnimation: PageTransitionAnimation.fade
                       );
                     } else {
                     }
@@ -128,7 +127,6 @@ class _MyAppBarState extends State<MyAppBar> {
                   screen: const WelcomeScreen(),
                   withNavBar: false,
                   settings: const RouteSettings(name: WelcomeScreen.id),
-                  pageTransitionAnimation: PageTransitionAnimation.fade
               );
             },
             alignment: Alignment.topLeft,

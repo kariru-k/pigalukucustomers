@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -118,7 +119,6 @@ class _VendorCategoriesState extends State<VendorCategories> {
                               screen: const ProductListScreen(),
                               withNavBar: true,
                               settings: const RouteSettings(name: ProductListScreen.id),
-                              pageTransitionAnimation: PageTransitionAnimation.fade
                           );
                         },
                         child: Padding(
@@ -141,7 +141,11 @@ class _VendorCategoriesState extends State<VendorCategories> {
                                     child: Center(
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Image.network(document["image"], fit: BoxFit.fill, height: MediaQuery.of(context).size.height,),
+                                        child: CachedNetworkImage(
+                                          imageUrl: document["image"],
+                                          fit: BoxFit.fill,
+                                          height: MediaQuery.of(context).size.height,
+                                        ),
                                       ),
                                     ),
                                   ),

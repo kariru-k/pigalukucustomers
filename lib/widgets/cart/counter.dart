@@ -8,7 +8,7 @@ import 'package:piga_luku_customers/services/cart_services.dart';
 class CounterForCard extends StatefulWidget {
   const CounterForCard({Key? key, required this.sizes, required this.document}) : super(key: key);
   final List sizes;
-  final DocumentSnapshot document;
+  final DocumentSnapshot? document;
 
   @override
   State<CounterForCard> createState() => CounterForCardState();
@@ -28,12 +28,12 @@ class CounterForCardState extends State<CounterForCard> {
         .collection('cart')
         .doc(user!.uid)
         .collection('products')
-        .where("productId", isEqualTo: widget.document["productId"])
+        .where("productId", isEqualTo: widget.document!["productId"])
         .get()
         .then((QuerySnapshot querySnapshot) {
           if (querySnapshot.docs.isNotEmpty) {
             for (var doc in querySnapshot.docs) {
-              if (doc["productId"] == widget.document["productId"] && doc["size"] == dropdownValue) {
+              if (doc["productId"] == widget.document!["productId"] && doc["size"] == dropdownValue) {
                 setState(() {
                   _exists = true;
                   _docId = doc.id;
@@ -65,10 +65,15 @@ class CounterForCardState extends State<CounterForCard> {
 
     getCartData();
 
+    if (widget.sizes.length == 1) {
+      dropdownValue = widget.sizes[0];
+    }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
+        widget.sizes.isNotEmpty && widget.sizes.length > 1
+            ?
         SizedBox(
           height: 40,
           child: DecoratedBox(
@@ -111,7 +116,9 @@ class CounterForCardState extends State<CounterForCard> {
               ),
             ),
           ),
-        ),
+        )
+            :
+        Container(),
         _exists ?
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -138,14 +145,13 @@ class CounterForCardState extends State<CounterForCard> {
                               _updating = false;
                               _exists = false;
                             });
-                            cart.checkData();
                           });
                         }
                         if (_qty> 1) {
                           setState(() {
                             _qty = (_qty- 1);
                           });
-                          var total = _qty * widget.document["price"];
+                          var total = _qty * widget.document!["price"];
                           cart.updateCartQuantity(_docId, _qty, total).then((value){
                             setState(() {
                               _updating = false;
@@ -186,7 +192,7 @@ class CounterForCardState extends State<CounterForCard> {
                         _qty = (_qty + 1);
                         _updating = true;
                       });
-                      var total = _qty * widget.document["price"];
+                      var total = _qty * widget.document!["price"];
                       cart.updateCartQuantity(_docId, _qty, total).then((value){
                         setState(() {
                           _updating = false;
@@ -211,11 +217,11 @@ class CounterForCardState extends State<CounterForCard> {
               if (dropdownValue != null) {
                 EasyLoading.show(status: "Adding To Cart");
                 cart.checkSeller().then((shopName){
-                  if (shopName == widget.document["seller.shopName"] || shopName == null) {
+                  if (shopName == widget.document!["seller.shopName"] || shopName == null) {
                     setState(() {
                       _exists = true;
                     });
-                    cart.addToCart(widget.document, dropdownValue).then((value){
+                    cart.addToCart(widget.document!, dropdownValue).then((value){
                       EasyLoading.showSuccess("Added to Cart!");
                     });
                     return;
@@ -251,7 +257,7 @@ class CounterForCardState extends State<CounterForCard> {
     showCupertinoDialog(context: context, builder: (BuildContext context){
       return CupertinoAlertDialog(
         title: const Text("Replace Old Cart Items With New Ones"),
-        content: Text("Your cart already Contains Items from $shopName. Add these new Items from ${widget.document["seller.shopName"]} and remove the old ones?"),
+        content: Text("Your cart already Contains Items from $shopName. Add these new Items from ${widget.document!["seller.shopName"]} and remove the old ones?"),
         actions: [
           TextButton(
               onPressed: (){
@@ -262,7 +268,7 @@ class CounterForCardState extends State<CounterForCard> {
           TextButton(
               onPressed: (){
                 cart.deleteCart().then((value){
-                  cart.addToCart(widget.document, dropdownValue).then((value){
+                  cart.addToCart(widget.document!, dropdownValue).then((value){
                     setState(() {
                       _exists = true;
                     });

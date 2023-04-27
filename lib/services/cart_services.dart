@@ -15,6 +15,7 @@ class CartServices{
     return cart.doc(user!.uid).collection("products").add({
       "productId": document['productId'],
       "productName": document['productName'],
+      "productImage": document['productImage'],
       "gender": document['gender'],
       "price": document['price'],
       "itemCode": document['itemCode'],
@@ -78,9 +79,4 @@ class CartServices{
     DocumentSnapshot doc = await cart.doc(user!.uid).get();
     return doc;
   }
-
-
-
-
-
 }

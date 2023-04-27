@@ -120,7 +120,6 @@ class _TopPickStoreState extends State<TopPickStore> {
                                 screen: VendorHomeScreen(documentid: document["uid"],),
                                 withNavBar: true,
                                 settings: const RouteSettings(name: VendorHomeScreen.id),
-                                pageTransitionAnimation: PageTransitionAnimation.fade
                             );
                           },
 
