@@ -10,56 +10,60 @@ class CartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-            bottom: BorderSide(
-                color: Colors.grey
-            )
-        )
-      ),
-      height: 120,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Stack(
-          children: [
-            Row(
-              children: [
-                SizedBox(
-                  height: 120,
-                  width: 120,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CachedNetworkImage(
-                      imageUrl: document!["productImage"],
-                      fit: BoxFit.contain,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+              bottom: BorderSide(
+                  color: Colors.grey
+              )
+          ),
+          color: Colors.white
+        ),
+        height: 120,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                    height: 120,
+                    width: 120,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CachedNetworkImage(
+                        imageUrl: document!["productImage"],
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(document!["productName"]),
-                    Text(
-                      "Size: ${document!["size"]}",
-                      style: const TextStyle(
-                          color: Colors.blueGrey,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text("Kshs. ${document!["price"].toString()}"),
-                  ],
-                )
-              ],
-            ),
-            Positioned(
-              right: 0.0,
-              bottom: 0.0,
-              child: CounterForCard(
-                sizes: [document!["size"]],
-                document: document,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(document!["productName"]),
+                      Text(
+                        "Size: ${document!["size"]}",
+                        style: const TextStyle(
+                            color: Colors.blueGrey,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Text("Kshs. ${document!["price"].toString()}"),
+                    ],
+                  )
+                ],
               ),
-            )
-          ],
+              Positioned(
+                right: 0.0,
+                bottom: 0.0,
+                child: CounterForCard(
+                  sizes: [document!["size"]],
+                  document: document,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
