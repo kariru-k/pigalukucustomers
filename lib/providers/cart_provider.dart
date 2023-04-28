@@ -36,8 +36,10 @@ class CartProvider with ChangeNotifier{
   getPaymentMethod(index){
     if (index == 0) {
       cod = true;
-      notifyListeners();
+    } else {
+      cod = false;
     }
+    notifyListeners();
   }
 
 

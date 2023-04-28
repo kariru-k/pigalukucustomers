@@ -18,6 +18,7 @@ class AuthProvider with ChangeNotifier{
   bool loading = false;
   final locationProvider = LocationProvider();
   late String screen;
+  DocumentSnapshot? snapshot;
 
 
   Future<void>verifyPhone({required BuildContext context, required String number})async{
@@ -174,4 +175,15 @@ class AuthProvider with ChangeNotifier{
       return false;
     }
   }
+
+
+  getUserDetails() async{
+    DocumentSnapshot result = await FirebaseFirestore.instance.collection("users").doc(_auth.currentUser!.uid).get();
+
+    snapshot = result;
+
+    return result;
+  }
+
+
 }

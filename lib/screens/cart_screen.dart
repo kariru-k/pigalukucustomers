@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/cart_provider.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
 import 'package:piga_luku_customers/screens/profile_screen.dart';
@@ -33,7 +35,6 @@ class _CartScreenState extends State<CartScreen> {
   int deliveryfee = 0;
   String? address;
   bool loading = false;
-  bool checkngUser = false;
 
 
   @override
@@ -49,6 +50,8 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     var cartProvider = Provider.of<CartProvider>(context);
     var locationProvider = Provider.of<LocationProvider>(context);
+    var userDetails = Provider.of<AuthProvider>(context);
+    userDetails.getUserDetails();
 
 
     locationProvider.getPrefs().then((value){
@@ -149,36 +152,26 @@ class _CartScreenState extends State<CartScreen> {
                           backgroundColor: Colors.redAccent
                         ),
                         onPressed: (){
-                          setState(() {
-                            checkngUser = true;
-                          });
+                          EasyLoading.show(status: "Please Wait...");
                           userServices.getUserById(user!.uid).then((value){
                             if (value["id"] == null) {
-                              setState(() {
-                                checkngUser = false;
-                              });
+                              EasyLoading.dismiss();
                               PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                                 context,
                                 screen: const ProfileScreen(),
                                 settings: const RouteSettings(name: ProfileScreen.id),
                               );
                             } else {
-                              setState(() {
-                                checkngUser = false;
-                              });
+                              EasyLoading.dismiss();
                               if (cartProvider.cod == true) {
-                                print("Cash on Delivery");
-                              }  else {
-                                print("Will pay online");
+
+                              }
+                              else {
                               }
                             }
                           });
                         },
-                        child: checkngUser
-                            ?
-                        const CircularProgressIndicator()
-                            :
-                        const Text(
+                        child: const Text(
                           "CHECKOUT",
                           style: TextStyle(
                               color: Colors.white,

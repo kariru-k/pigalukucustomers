@@ -28,7 +28,7 @@ class _CartNotificationState extends State<CartNotification> {
     });
 
     return Visibility(
-      visible: cartProvider.distance! <= 5 ? cartProvider.cartQuantity! > 0 ? true : false : false,
+      visible: cartProvider.cartQuantity! > 0 ? true : false,
       child: Padding(
         padding: const EdgeInsets.only(top: 28.0),
         child: Container(

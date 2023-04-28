@@ -85,7 +85,7 @@ class MainScreen extends StatelessWidget {
           ),
           popAllScreensOnTapOfSelectedTab: true,
           popActionScreens: PopActionScreensType.all,
-          navBarStyle: NavBarStyle.style1, // Choose the nav bar style with this property.
+          navBarStyle: NavBarStyle.style11, // Choose the nav bar style with this property.
       ),
     );
   }
