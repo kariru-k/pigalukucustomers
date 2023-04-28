@@ -10,6 +10,7 @@ class CartProvider with ChangeNotifier{
   QuerySnapshot? snapshot;
   String? address;
   double? distance;
+  bool cod = false;
 
   Future<double>getCartTotal() async {
     var cartTotal = 0.0;
@@ -30,6 +31,13 @@ class CartProvider with ChangeNotifier{
   getDistance(distance){
     this.distance = distance;
     notifyListeners();
+  }
+
+  getPaymentMethod(index){
+    if (index == 0) {
+      cod = true;
+      notifyListeners();
+    }
   }
 
 

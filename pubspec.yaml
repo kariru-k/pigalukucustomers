@@ -17,7 +17,7 @@ dependencies:
   animate_gradient: ^0.0.2
   simple_animations: ^5.0.0+3
   firebase_auth: ^4.4.2
-  cloud_firestore: ^4.5.2
+  cloud_firestore: ^4.5.3
   firebase_core: ^2.10.0
   provider: ^6.0.5
   geolocator: ^9.0.2
@@ -35,6 +35,7 @@ dependencies:
   async: ^2.10.0
   expandable_text: ^2.3.0
   flutter_easyloading:
+  fk_toggle: ^0.1.4
 
 
 dev_dependencies:

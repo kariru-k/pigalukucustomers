@@ -1,11 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:piga_luku_customers/providers/cart_provider.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
+import 'package:piga_luku_customers/screens/profile_screen.dart';
 import 'package:piga_luku_customers/services/store_services.dart';
+import 'package:piga_luku_customers/services/user_services.dart';
 import 'package:piga_luku_customers/widgets/cart/cart_list.dart';
+import 'package:piga_luku_customers/widgets/cart/cod_toggle.dart';
 import 'package:provider/provider.dart';
 
 import 'map_screen.dart';
@@ -21,12 +25,15 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   StoreServices store = StoreServices();
+  UserServices userServices = UserServices();
+  User? user = FirebaseAuth.instance.currentUser;
   DocumentSnapshot? doc;
   var textStyle = const TextStyle(color: Colors.grey);
   int discount = 0;
   int deliveryfee = 0;
   String? address;
   bool loading = false;
+  bool checkngUser = false;
 
 
   @override
@@ -52,12 +59,12 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomSheet: Container(
-        height: 160,
+        height: 140,
         color: Colors.blueGrey[900],
         child: Column(
           children: [
             Container(
-              height: 100,
+              height: 80,
               width: MediaQuery.of(context).size.width,
               color: Colors.white,
               child: Padding(
@@ -78,7 +85,13 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                         InkWell(
                           onTap: () {
+                            setState(() {
+                              loading = true;
+                            });
                             locationProvider.getCurrentPosition().then((value){
+                              setState(() {
+                                loading = false;
+                              });
                               if(locationProvider.permissionAllowed == true){
                                 PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                                   context,
@@ -87,17 +100,23 @@ class _CartScreenState extends State<CartScreen> {
                                   settings: const RouteSettings(name: MapScreen.id),
                                 );
                               } else {
-
+                                setState(() {
+                                  loading = false;
+                                });
                               }
                             });
                           },
-                          child: const Text(
+                          child: !loading
+                              ?
+                          const Text(
                             "Change",
                             style: TextStyle(
                                 color: Colors.red,
                                 fontSize: 15
                             ),
-                          ),
+                          )
+                              :
+                          const CircularProgressIndicator(),
                         )
                       ],
                     ),
@@ -129,8 +148,43 @@ class _CartScreenState extends State<CartScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.redAccent
                         ),
-                        onPressed: (){},
-                        child: const Text("CHECKOUT", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),)
+                        onPressed: (){
+                          setState(() {
+                            checkngUser = true;
+                          });
+                          userServices.getUserById(user!.uid).then((value){
+                            if (value["id"] == null) {
+                              setState(() {
+                                checkngUser = false;
+                              });
+                              PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                context,
+                                screen: const ProfileScreen(),
+                                settings: const RouteSettings(name: ProfileScreen.id),
+                              );
+                            } else {
+                              setState(() {
+                                checkngUser = false;
+                              });
+                              if (cartProvider.cod == true) {
+                                print("Cash on Delivery");
+                              }  else {
+                                print("Will pay online");
+                              }
+                            }
+                          });
+                        },
+                        child: checkngUser
+                            ?
+                        const CircularProgressIndicator()
+                            :
+                        const Text(
+                          "CHECKOUT",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold
+                          ),
+                        )
                     )
                   ],
                 ),
@@ -211,6 +265,9 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ),
                   ),
+                  Divider(color: Colors.grey[300],),
+                  const CodToggleSwitch(),
+                  Divider(color: Colors.grey[300],),
                   CartList(document: widget.document,),
                   Container(
                     color: Colors.white,
@@ -240,7 +297,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 4.0, left: 4.0, top: 4, bottom: 100),
+                    padding: const EdgeInsets.only(right: 4.0, left: 4.0, top: 4, bottom: 80),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: Padding(

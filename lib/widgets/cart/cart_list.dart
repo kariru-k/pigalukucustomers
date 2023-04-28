@@ -30,14 +30,21 @@ class _CartListState extends State<CartList> {
           );
         }
 
-        return ListView(
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          children: snapshot.data!.docs.map((DocumentSnapshot document) {
-            return CartCard(
-              document: document,
-            );
-          }).toList(),
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+              return Material(
+                color: Colors.purpleAccent,
+                elevation: 4,
+                child: CartCard(
+                  document: document,
+                ),
+              );
+            }).toList(),
+          ),
         );
       },
     );
