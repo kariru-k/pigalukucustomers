@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutterflow_paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:piga_luku_customers/constants.dart';
+import 'package:piga_luku_customers/providers/cart_provider.dart';
 import 'package:piga_luku_customers/services/store_services.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +32,7 @@ class _NearByStoresState extends State<NearByStores> {
   Widget build(BuildContext context) {
 
     final storeData = Provider.of<StoreProvider>(context);
+    final cart = Provider.of<CartProvider>(context);
     storeData.getUserLocationData(context);
 
     String getDistance(location){
@@ -61,6 +64,11 @@ class _NearByStoresState extends State<NearByStores> {
               shopDistance.add(distanceInKm);
             }
             shopDistance.sort();
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                cart.getDistance(shopDistance[0]);
+              });
+            });
             if (shopDistance[0] > 5) {
               return const Padding(
                 padding: EdgeInsets.all(8.0),

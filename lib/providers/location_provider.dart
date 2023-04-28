@@ -70,7 +70,15 @@ class LocationProvider with ChangeNotifier{
     preferences.setString("address", "${address!.name}");
     preferences.setString("street", "${address.street}");
     preferences.setString("locality", "${address.locality}");
+    notifyListeners();
+  }
 
+  Future<List>getPrefs() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? location = preferences.getString('address');
+    String? street = preferences.getString("street");
+    String? locality = preferences.getString("locality");
+    return [location, street, locality];
   }
 
 

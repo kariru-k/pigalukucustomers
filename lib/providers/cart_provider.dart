@@ -8,6 +8,8 @@ class CartProvider with ChangeNotifier{
   double? subTotal;
   int? cartQuantity;
   QuerySnapshot? snapshot;
+  String? address;
+  double? distance;
 
   Future<double>getCartTotal() async {
     var cartTotal = 0.0;
@@ -24,6 +26,13 @@ class CartProvider with ChangeNotifier{
 
     return cartTotal;
   }
+
+  getDistance(distance){
+    this.distance = distance;
+    notifyListeners();
+  }
+
+
 
 
 }

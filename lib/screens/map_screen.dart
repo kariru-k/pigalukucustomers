@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
 import 'package:piga_luku_customers/screens/login_screen.dart';
-import 'package:piga_luku_customers/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 
 class MapScreen extends StatefulWidget {
@@ -202,13 +200,7 @@ class _MapScreenState extends State<MapScreen> {
                                               address: '${locationData.selectedAddress!.name}, ${locationData.selectedAddress!.street}, ${locationData.selectedAddress!.locality}, ${locationData.selectedAddress!.administrativeArea}'
                                           ).then((value){
                                             if (value == true) {
-                                              PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
-                                                  context,
-                                                  screen: const MainScreen(),
-                                                  withNavBar: false,
-                                                  settings: const RouteSettings(name: MainScreen.id),
-                                                  pageTransitionAnimation: PageTransitionAnimation.fade
-                                              );
+                                              Navigator.pop(context);
                                               locationData.savePreferences(locationData.longitude, locationData.latitude, locationData.selectedAddress);
                                             } else {
                                               

@@ -1,10 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:piga_luku_customers/providers/cart_provider.dart';
+import 'package:piga_luku_customers/providers/location_provider.dart';
 import 'package:piga_luku_customers/services/store_services.dart';
 import 'package:piga_luku_customers/widgets/cart/cart_list.dart';
 import 'package:provider/provider.dart';
+
+import 'map_screen.dart';
 
 class CartScreen extends StatefulWidget {
   static const String id = 'cart-screen';
@@ -21,6 +25,9 @@ class _CartScreenState extends State<CartScreen> {
   var textStyle = const TextStyle(color: Colors.grey);
   int discount = 0;
   int deliveryfee = 0;
+  String? address;
+  bool loading = false;
+
 
   @override
   void initState() {
@@ -28,43 +35,108 @@ class _CartScreenState extends State<CartScreen> {
     store.getShopDetails(widget.document!["sellerUid"]).then((value){
       doc = value;
     });
-
   }
 
 
   @override
   Widget build(BuildContext context) {
     var cartProvider = Provider.of<CartProvider>(context);
+    var locationProvider = Provider.of<LocationProvider>(context);
+
+
+    locationProvider.getPrefs().then((value){
+      address = "${value[0]}, ${value[1]}, ${value[2]}";
+    });
+
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomSheet: Container(
-        height: 60,
+        height: 160,
         color: Colors.blueGrey[900],
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
+        child: Column(
+          children: [
+            Container(
+              height: 100,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Kshs ${cartProvider.subTotal}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
-                    const Text("Including Taxes", style: TextStyle(color: Colors.green, fontSize: 10),)
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            "Deliver to this address ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            locationProvider.getCurrentPosition().then((value){
+                              if(locationProvider.permissionAllowed == true){
+                                PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                  context,
+                                  screen: const MapScreen(),
+                                  withNavBar: false,
+                                  settings: const RouteSettings(name: MapScreen.id),
+                                );
+                              } else {
+
+                              }
+                            });
+                          },
+                          child: const Text(
+                            "Change",
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 15
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Text(
+                      address.toString(),
+                      maxLines: 3,
+                      style: const TextStyle(color: Colors.brown, fontSize: 16),
+                      overflow: TextOverflow.ellipsis,
+                    )
                   ],
                 ),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent
-                    ),
-                    onPressed: (){},
-                    child: const Text("CHECKOUT", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),)
-                )
-              ],
+              ),
             ),
-          ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("Kshs ${cartProvider.subTotal}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
+                        const Text("Including Taxes", style: TextStyle(color: Colors.green, fontSize: 10),)
+                      ],
+                    ),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent
+                        ),
+                        onPressed: (){},
+                        child: const Text("CHECKOUT", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),)
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       body: NestedScrollView(
@@ -168,111 +240,117 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(4.0),
+                    padding: const EdgeInsets.only(right: 4.0, left: 4.0, top: 4, bottom: 100),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      child: Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("Bill Details", style: TextStyle(fontWeight: FontWeight.bold),),
-                            const SizedBox(height: 10,),
-                            Row(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                    child: Text(
-                                      "Basket Value",
-                                      style: textStyle,
-                                    )
-                                ),
-                                Text(
-                                  "Kshs. ${cartProvider.subTotal!.toStringAsFixed(0)}",
-                                  style: textStyle,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10,),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: Text(
-                                      "Discount",
-                                      style: textStyle,
-                                    )
-                                ),
-                                Text(
-                                  "Kshs. $discount",
-                                  style: textStyle,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10,),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: Text(
-                                      "Delivery Fees",
-                                      style: textStyle,
-                                    )
-                                ),
-                                Text(
-                                  "Kshs. $deliveryfee",
-                                  style: textStyle,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10,),
-                            const Divider(color: Colors.grey,),
-                            const SizedBox(height: 10,),
-                            Row(
-                              children: [
-                                const Expanded(
-                                    child: Text(
-                                      "Total Amount Payable",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 15
-                                      ),
-                                    )
-                                ),
-                                Text(
-                                  "Kshs. ${deliveryfee + discount + cartProvider.subTotal!.toDouble()}",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 15
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10,),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                color: Theme.of(context).primaryColor.withOpacity(.3)
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Row(
-                                  children: const [
+                                const Text("Bill Details", style: TextStyle(fontWeight: FontWeight.bold),),
+                                const SizedBox(height: 10,),
+                                Row(
+                                  children: [
                                     Expanded(
-                                      child: Text(
-                                        "Total Savings",
-                                        style: TextStyle(
-                                          color: Colors.green
-                                        ),
-                                      ),
+                                        child: Text(
+                                          "Basket Value",
+                                          style: textStyle,
+                                        )
                                     ),
                                     Text(
-                                      "Kshs. 200",
-                                      style: TextStyle(
-                                          color: Colors.green
-                                      ),
-                                    )
+                                      "Kshs. ${cartProvider.subTotal!.toStringAsFixed(0)}",
+                                      style: textStyle,
+                                    ),
                                   ],
                                 ),
-                              ),
-                            )
-                          ],
+                                const SizedBox(height: 10,),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: Text(
+                                          "Discount",
+                                          style: textStyle,
+                                        )
+                                    ),
+                                    Text(
+                                      "Kshs. $discount",
+                                      style: textStyle,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10,),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: Text(
+                                          "Delivery Fees",
+                                          style: textStyle,
+                                        )
+                                    ),
+                                    Text(
+                                      "Kshs. $deliveryfee",
+                                      style: textStyle,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10,),
+                                const Divider(color: Colors.grey,),
+                                const SizedBox(height: 10,),
+                                Row(
+                                  children: [
+                                    const Expanded(
+                                        child: Text(
+                                          "Total Amount Payable",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 15
+                                          ),
+                                        )
+                                    ),
+                                    Text(
+                                      "Kshs. ${deliveryfee + discount + cartProvider.subTotal!.toDouble()}",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 15
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10,),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    color: Theme.of(context).primaryColor.withOpacity(.3)
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Row(
+                                      children: const [
+                                        Expanded(
+                                          child: Text(
+                                            "Total Savings",
+                                            style: TextStyle(
+                                              color: Colors.green
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          "Kshs. 200",
+                                          style: TextStyle(
+                                              color: Colors.green
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),

@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../providers/location_provider.dart';
 import '../screens/map_screen.dart';
@@ -27,27 +26,21 @@ class _MyAppBarState extends State<MyAppBar> {
 
   @override
   void initState() {
-    getPrefs();
     super.initState();
   }
-
-  getPrefs() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String? location = preferences.getString('address');
-    String? street = preferences.getString("street");
-    String? locality = preferences.getString("locality");
-    setState(() {
-      _location = location!;
-      _street = street!;
-      _locality = locality!;
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
 
     final locationData = Provider.of<LocationProvider>(context);
+
+    locationData.getPrefs().then((value){
+      setState(() {
+        _location = value[0];
+        _street = value[1];
+        _locality = value[2];
+      });
+    });
 
     return SliverAppBar(
       automaticallyImplyLeading: true,
@@ -98,16 +91,18 @@ class _MyAppBarState extends State<MyAppBar> {
                   icon: const Icon(Icons.edit_outlined, size: 18,),
                   color: Colors.white,
                   onPressed: () {
-                    locationData.getCurrentPosition();
-                    if(locationData.permissionAllowed == true){
-                      PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                    locationData.getCurrentPosition().then((value){
+                      if(locationData.permissionAllowed == true){
+                        PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                           context,
                           screen: const MapScreen(),
-                          withNavBar: true,
+                          withNavBar: false,
                           settings: const RouteSettings(name: MapScreen.id),
-                      );
-                    } else {
-                    }
+                        );
+                      } else {
+
+                      }
+                    });
                   },
                 )
               ],
