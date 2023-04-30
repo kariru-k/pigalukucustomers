@@ -8,6 +8,7 @@ class CartProvider with ChangeNotifier{
   double? subTotal;
   int? cartQuantity;
   QuerySnapshot? snapshot;
+  DocumentSnapshot? document;
   String? address;
   double? distance;
   bool cod = false;
@@ -40,6 +41,17 @@ class CartProvider with ChangeNotifier{
       cod = false;
     }
     notifyListeners();
+  }
+
+  getShopName() async {
+    DocumentSnapshot doc = await cart.cart.doc(cart.user!.uid).get();
+    if(doc.exists){
+      document = doc;
+      notifyListeners();
+    } else {
+      document = null;
+      notifyListeners();
+    }
   }
 
 

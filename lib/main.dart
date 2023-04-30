@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:piga_luku_customers/firebase_options.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/cart_provider.dart';
+import 'package:piga_luku_customers/providers/coupon_provider.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
 import 'package:piga_luku_customers/providers/store_provider.dart';
 import 'package:piga_luku_customers/screens/cart_screen.dart';
@@ -41,6 +42,9 @@ void main() async{
         ),
         ChangeNotifierProvider(
             create: (_)=> CartProvider()
+        ),
+        ChangeNotifierProvider(
+            create: (_)=> CouponProvider()
         ),
       ],
     child: const MyApp(),

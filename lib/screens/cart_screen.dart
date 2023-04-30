@@ -96,6 +96,9 @@ class _CartScreenState extends State<CartScreen> {
           body: cartProvider.cartQuantity! > 0
               ?
           SingleChildScrollView(
+            physics: const ClampingScrollPhysics(
+              parent: NeverScrollableScrollPhysics()
+            ),
             padding: const EdgeInsets.only(bottom: 80),
             child: Container(
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -128,7 +131,7 @@ class _CartScreenState extends State<CartScreen> {
                   const CodToggleSwitch(),
                   Divider(color: Colors.grey[300],),
                   CartList(document: widget.document,),
-                  const CouponWidget(),
+                  CouponWidget(couponVendor: doc!["uid"],),
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0, left: 4.0, top: 4, bottom: 80),
                     child: SizedBox(
@@ -250,7 +253,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
           )
               :
-          const Center(child: Text("Your Cart is Empty! Please add some products"))
+          const SingleChildScrollView(child: Center(child: Text("Your Cart is Empty! Please add some products")))
       )
     );
   }

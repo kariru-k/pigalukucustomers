@@ -36,6 +36,7 @@ dependencies:
   expandable_text: ^2.3.0
   flutter_easyloading:
   fk_toggle: ^0.1.4
+  dotted_border: ^2.0.0+3
 
 
 dev_dependencies:
