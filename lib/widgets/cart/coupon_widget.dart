@@ -1,6 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:piga_luku_customers/providers/cart_provider.dart';
 import 'package:piga_luku_customers/providers/coupon_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,7 @@ class _CouponWidgetState extends State<CouponWidget> {
   @override
   Widget build(BuildContext context) {
     var coupon = Provider.of<CouponProvider>(context);
+    var cart = Provider.of<CartProvider>(context);
 
 
     return SingleChildScrollView(
@@ -66,7 +68,7 @@ class _CouponWidgetState extends State<CouponWidget> {
                     child: OutlinedButton(
                         onPressed: (){
                           coupon.getCouponDetails(couponTitle.text, widget.couponVendor).then((value){
-                            if (value.data() == null || value["sellerId"] != widget.couponVendor) {
+                            if (coupon.document == null || value["sellerId"] != widget.couponVendor) {
                               setState(() {
                                 coupon.discountRate = 0;
                                 _visible = false;
@@ -77,14 +79,19 @@ class _CouponWidgetState extends State<CouponWidget> {
                               );
                             }
                             if(coupon.expired != true){
+                              print(coupon.discountRate);
+                              print(cart.subTotal);
                               setState(() {
                                 _visible = true;
+                                coupon.expired = false;
+
                               });
                             }
                             else{
                               setState(() {
                                 coupon.discountRate = 0;
                                 _visible = false;
+                                coupon.expired = false;
                               });
                               showDialog(
                                   code: couponTitle.text,
@@ -132,7 +139,7 @@ class _CouponWidgetState extends State<CouponWidget> {
                                 ),
                                 Divider(color: Colors.grey[300],),
                                 Text(coupon.document!["details"]),
-                                Text("${coupon.discountRate} discount on all total purchases"),
+                                Text("${coupon.discountRate}% discount on all total purchases"),
                                 const SizedBox(height: 10,)
                               ]
                           ),

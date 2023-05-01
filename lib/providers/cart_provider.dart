@@ -12,12 +12,19 @@ class CartProvider with ChangeNotifier{
   String? address;
   double? distance;
   bool cod = false;
+  List cartList = [];
 
   Future<double>getCartTotal() async {
     var cartTotal = 0.0;
+    List _newList = [];
     QuerySnapshot? snapshot = await cart.cart.doc(cart.user!.uid).collection("products").get();
 
     for (var doc in snapshot.docs) {
+      if (!_newList.contains(doc.data())) {
+        _newList.add(doc.data());
+        cartList = _newList;
+        notifyListeners();
+      }
       cartTotal = cartTotal + doc["total"];
     }
 

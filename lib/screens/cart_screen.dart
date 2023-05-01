@@ -2,16 +2,23 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/cart_provider.dart';
+import 'package:piga_luku_customers/providers/coupon_provider.dart';
+import 'package:piga_luku_customers/screens/profile_screen.dart';
+import 'package:piga_luku_customers/services/cart_services.dart';
 import 'package:piga_luku_customers/services/store_services.dart';
 import 'package:piga_luku_customers/services/user_services.dart';
-import 'package:piga_luku_customers/widgets/cart/cart_bottomsheet_widget.dart';
 import 'package:piga_luku_customers/widgets/cart/cart_list.dart';
 import 'package:piga_luku_customers/widgets/cart/cod_toggle.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/location_provider.dart';
+import '../services/order_services.dart';
 import '../widgets/cart/coupon_widget.dart';
+import 'map_screen.dart';
 
 class CartScreen extends StatefulWidget {
   static const String id = 'cart-screen';
@@ -47,11 +54,184 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     var cartProvider = Provider.of<CartProvider>(context);
     var userDetails = Provider.of<AuthProvider>(context);
+    var locationProvider = Provider.of<LocationProvider>(context);
+    var couponProvider = Provider.of<CouponProvider>(context);
+    OrderServices orderServices = OrderServices();
+    CartServices cartServices = CartServices();
+
+    if (couponProvider.discountRate != 0) {
+      setState(() {
+        discount = (couponProvider.discountRate * cartProvider.subTotal!.round()) ~/ 100;
+      });
+    }
+
+    if (cartProvider.cartQuantity == 0) {
+      setState(() {
+        discount = 0;
+        couponProvider.discountRate = 0;
+      });
+    }
+
     userDetails.getUserDetails();
 
+    locationProvider.getPrefs().then((value){
+      address = "${value[0]}, ${value[1]}, ${value[2]}";
+    });
+
+    saveOrder(CartProvider cartProvider, payable, CouponProvider couponProvider){
+      orderServices.saveOrder({
+        "products": cartProvider.cartList,
+        "userID": user!.uid,
+        "deliveryFee": deliveryfee,
+        "total": payable,
+        "discount": discount,
+        "cod": cartProvider.cod,
+        "discountCode": couponProvider.document == null ? null : couponProvider.document!["title"],
+        "seller": {
+          "shopName": widget.document!["shopName"],
+          "sellerId": widget.document!["sellerUid"]
+        },
+        "timestamp": DateTime.now().toString(),
+        "orderStatus": "Ordered",
+        "deliveryBoy": {
+          "name": "",
+          "phone": "",
+          "location": ""
+        },
+      }).then((value){
+        cartServices.deleteCart().then((value){
+          cartServices.checkData().then((value){
+            Navigator.pop(context);
+          });
+        });
+      });
+    }
+
+    var payable = cartProvider.subTotal! + deliveryfee - discount;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      bottomSheet: const CartBottomSheet(),
+      bottomSheet: Container(
+        height: 140,
+        color: Colors.blueGrey[900],
+        child: Column(
+          children: [
+            Container(
+              height: 80,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            "Deliver to this address ",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              loading = true;
+                            });
+                            locationProvider.getCurrentPosition().then((value){
+                              setState(() {
+                                loading = false;
+                              });
+                              if(locationProvider.permissionAllowed == true){
+                                PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                  context,
+                                  screen: const MapScreen(),
+                                  withNavBar: false,
+                                  settings: const RouteSettings(name: MapScreen.id),
+                                );
+                              } else {
+                                setState(() {
+                                  loading = false;
+                                });
+                              }
+                            });
+                          },
+                          child: !loading
+                              ?
+                          const Text(
+                            "Change",
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 15
+                            ),
+                          )
+                              :
+                          const CircularProgressIndicator(),
+                        )
+                      ],
+                    ),
+                    Text(
+                      address.toString(),
+                      maxLines: 3,
+                      style: const TextStyle(color: Colors.brown, fontSize: 16),
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("Kshs ${cartProvider.subTotal}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),),
+                        const Text("Including Taxes", style: TextStyle(color: Colors.green, fontSize: 10),)
+                      ],
+                    ),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent
+                        ),
+                        onPressed: (){
+                          EasyLoading.show(status: "Please Wait...");
+                          userServices.getUserById(user!.uid).then((value){
+                            if (value["id"] == null) {
+                              EasyLoading.dismiss();
+                              PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                context,
+                                screen: const ProfileScreen(),
+                                settings: const RouteSettings(name: ProfileScreen.id),
+                              );
+                            } else {
+                              EasyLoading.show(status: "Please wait...");
+                              saveOrder(cartProvider, payable, couponProvider);
+                              EasyLoading.showSuccess("Order submitted successfully");
+                            }
+                          });
+                        },
+                        child: const Text(
+                          "CHECKOUT",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold
+                          ),
+                        )
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
       body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled){
             return [
@@ -161,6 +341,8 @@ class _CartScreenState extends State<CartScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 10,),
+                                discount > 0
+                                    ?
                                 Row(
                                   children: [
                                     Expanded(
@@ -174,7 +356,9 @@ class _CartScreenState extends State<CartScreen> {
                                       style: textStyle,
                                     ),
                                   ],
-                                ),
+                                )
+                                    :
+                                Container(),
                                 const SizedBox(height: 10,),
                                 Row(
                                   children: [
@@ -205,7 +389,7 @@ class _CartScreenState extends State<CartScreen> {
                                         )
                                     ),
                                     Text(
-                                      "Kshs. ${deliveryfee + discount + cartProvider.subTotal!.toDouble()}",
+                                      "Kshs. $payable",
                                       style: const TextStyle(
                                           fontWeight: FontWeight.w900,
                                           fontSize: 15
@@ -222,8 +406,8 @@ class _CartScreenState extends State<CartScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8),
                                     child: Row(
-                                      children: const [
-                                        Expanded(
+                                      children:  [
+                                        const Expanded(
                                           child: Text(
                                             "Total Savings",
                                             style: TextStyle(
@@ -232,8 +416,8 @@ class _CartScreenState extends State<CartScreen> {
                                           ),
                                         ),
                                         Text(
-                                          "Kshs. 200",
-                                          style: TextStyle(
+                                          "Kshs $discount",
+                                          style: const TextStyle(
                                               color: Colors.green
                                           ),
                                         )
@@ -256,5 +440,9 @@ class _CartScreenState extends State<CartScreen> {
           const SingleChildScrollView(child: Center(child: Text("Your Cart is Empty! Please add some products")))
       )
     );
+
+
+
+
   }
 }

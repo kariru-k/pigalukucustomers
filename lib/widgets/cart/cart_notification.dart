@@ -27,7 +27,9 @@ class _CartNotificationState extends State<CartNotification> {
       });
     });
 
-    return Visibility(
+    return cartProvider.cartQuantity! > 0
+        ?
+    Visibility(
       visible: cartProvider.cartQuantity! > 0 ? true : false,
       child: Padding(
         padding: const EdgeInsets.only(top: 28.0),
@@ -84,6 +86,9 @@ class _CartNotificationState extends State<CartNotification> {
           ),
         ),
       ),
-    );
+    )
+        :
+    Container()
+    ;
   }
 }
