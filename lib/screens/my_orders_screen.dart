@@ -22,7 +22,7 @@ class _MyOrdersState extends State<MyOrders> {
 
   int tag = 0;
   List<String> options = [
-    'All Orders', "Ordered", 'Accepted', 'Picked Up',
+    'All Orders', "Ordered", "Rejected", "Cancelled", 'Accepted', 'Picked Up',
     'On the Way', 'Delivered'
   ];
 
@@ -121,10 +121,15 @@ class _MyOrdersState extends State<MyOrders> {
                                   ),
                                   title: Text(
                                     data["orderStatus"],
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.deepOrangeAccent,
-                                      fontWeight: FontWeight.bold
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        color: data["orderStatus"] == "Rejected"
+                                            ? Colors.red[900]
+                                            : data["orderStatus"] == "Accepted"
+                                            ? Colors.green.shade900
+                                            : Colors.blueGrey
+                                        ,
+                                        fontWeight: FontWeight.bold
                                     ),
                                   ),
                                   subtitle: Text(
