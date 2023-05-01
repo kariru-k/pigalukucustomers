@@ -1,7 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:piga_luku_customers/providers/cart_provider.dart';
 import 'package:piga_luku_customers/providers/coupon_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +22,6 @@ class _CouponWidgetState extends State<CouponWidget> {
   @override
   Widget build(BuildContext context) {
     var coupon = Provider.of<CouponProvider>(context);
-    var cart = Provider.of<CartProvider>(context);
 
 
     return SingleChildScrollView(
@@ -79,8 +77,6 @@ class _CouponWidgetState extends State<CouponWidget> {
                               );
                             }
                             if(coupon.expired != true){
-                              print(coupon.discountRate);
-                              print(cart.subTotal);
                               setState(() {
                                 _visible = true;
                                 coupon.expired = false;

@@ -101,6 +101,7 @@ class _CartScreenState extends State<CartScreen> {
       }).then((value){
         cartServices.deleteCart().then((value){
           cartServices.checkData().then((value){
+            EasyLoading.showSuccess("Order submitted successfully");
             Navigator.pop(context);
           });
         });

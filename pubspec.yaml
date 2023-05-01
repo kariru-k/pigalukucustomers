@@ -34,9 +34,11 @@ dependencies:
   map_launcher:
   async: ^2.10.0
   expandable_text: ^2.3.0
+  chips_choice: ^3.0.0
   flutter_easyloading:
   fk_toggle: ^0.1.4
   dotted_border: ^2.0.0+3
+  intl:
 
 
 dev_dependencies:

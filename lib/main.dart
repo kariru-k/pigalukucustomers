@@ -7,6 +7,7 @@ import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/cart_provider.dart';
 import 'package:piga_luku_customers/providers/coupon_provider.dart';
 import 'package:piga_luku_customers/providers/location_provider.dart';
+import 'package:piga_luku_customers/providers/order_provider.dart';
 import 'package:piga_luku_customers/providers/store_provider.dart';
 import 'package:piga_luku_customers/screens/cart_screen.dart';
 import 'package:piga_luku_customers/screens/home_screen.dart';
@@ -45,6 +46,9 @@ void main() async{
         ),
         ChangeNotifierProvider(
             create: (_)=> CouponProvider()
+        ),
+        ChangeNotifierProvider(
+            create: (_)=> OrderProvider()
         ),
       ],
     child: const MyApp(),
