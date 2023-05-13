@@ -93,11 +93,7 @@ class _CartScreenState extends State<CartScreen> {
         },
         "timestamp": DateTime.now().toString(),
         "orderStatus": "Ordered",
-        "deliveryBoy": {
-          "name": "",
-          "phone": "",
-          "location": ""
-        },
+        "deliveryBoy": null
       }).then((value){
         cartServices.deleteCart().then((value){
           cartServices.checkData().then((value){
