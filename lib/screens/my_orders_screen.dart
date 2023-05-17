@@ -22,7 +22,7 @@ class _MyOrdersState extends State<MyOrders> {
 
   int tag = 0;
   List<String> options = [
-    'All Orders', "Ordered", "Rejected", "Cancelled", 'Accepted', 'Picked Up',
+    'All Orders', "Ordered", "Rejected", "Cancelled", 'Accepted', "Assigned A Delivery Person", 'Picked Up',
     'On the Way', 'Delivered'
   ];
 
@@ -115,20 +115,15 @@ class _MyOrdersState extends State<MyOrders> {
                               children: [
                                 ListTile(
                                   horizontalTitleGap: 0,
-                                  leading: const CircleAvatar(
+                                  leading: CircleAvatar(
                                     radius: 14,
-                                    child: Icon(CupertinoIcons.square_list, size: 18, color: Colors.pinkAccent,),
+                                    child: orderServices.statusIcon(document),
                                   ),
                                   title: Text(
                                     data["orderStatus"],
                                     style: TextStyle(
                                         fontSize: 18,
-                                        color: data["orderStatus"] == "Rejected"
-                                            ? Colors.red[900]
-                                            : data["orderStatus"] == "Accepted"
-                                            ? Colors.green.shade900
-                                            : Colors.blueGrey
-                                        ,
+                                        color: orderServices.statusColor(document),
                                         fontWeight: FontWeight.bold
                                     ),
                                   ),
@@ -172,6 +167,47 @@ class _MyOrdersState extends State<MyOrders> {
                                   ),
                                 ),
                                 //TODO: Delivery boy contact, live location and delivery status
+
+                                if (data["deliveryBoy"] != null) ... [
+                                  const Text("Delivery Details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      child: Card(
+                                        elevation: 4,
+                                        child: ListTile(
+                                          tileColor: Colors.green.withOpacity(.2),
+                                          leading: CircleAvatar(
+                                            backgroundColor: Colors.grey[300],
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(20.0),
+                                              child: CachedNetworkImage(
+                                                imageUrl: data["deliveryBoy"]["image"],
+                                                height: 70,
+                                                width: 70,
+                                                fit: BoxFit.fill,
+                                              ),
+                                            ),
+                                          ),
+                                          title:  Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  const Text("Name: ", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black),),
+                                                  Text(data["deliveryBoy"]["name"],),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 5,)
+                                            ],
+                                          ),
+                                          subtitle: Text(orderServices.statusComment(document)),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                                 ExpansionTile(
                                   title: const Text(
                                     "Order details",
@@ -204,8 +240,17 @@ class _MyOrdersState extends State<MyOrders> {
                                             title: Text(
                                               data["products"][index]["productName"]
                                             ),
-                                            subtitle: Text(
-                                              "Quantity: ${data["products"][index]["qty"].toString()}",
+                                            subtitle: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Quantity: ${data["products"][index]["qty"].toString()}",
+                                                ),
+                                                Text(
+                                                  "Size: ${data["products"][index]["size"].toString()}",
+                                                ),
+                                              ],
                                             ),
                                           );
                                         }

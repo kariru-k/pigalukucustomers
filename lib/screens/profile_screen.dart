@@ -91,33 +91,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 const SizedBox(width: 10,),
                                 SizedBox(
                                   height: 70,
-                                  child: Column(
+                                  child: userDetails.snapshot == null ? const CircularProgressIndicator() : Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        userDetails.snapshot != null
-                                            ?
-                                        "${userDetails.snapshot!["firstName"]} ${userDetails.snapshot!["lastName"]}"
-                                            :
-                                        "Update Your Name",
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: Colors.white
-                                        ),
-                                      ),
-                                      Text(
-                                        userDetails.snapshot != null
-                                            ?
-                                        "${userDetails.snapshot!["email"]}"
-                                            :
-                                        "Update Your Email Address",
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.white
-                                        ),
-                                      ),
+                                      if (userDetails.snapshot!.get("firstName") != null && userDetails.snapshot!.get("email") != null) ...[
+                                        Text("${userDetails.snapshot!["firstName"]} ${userDetails.snapshot!["lastName"]}"),
+                                        Text("${userDetails.snapshot!["email"]}")
+                                      ] else ... [
+                                        const Text("Update Your Name"),
+                                        const Text("Update Your Email Address")
+                                      ],
                                       Text(
                                         user!.phoneNumber.toString(),
                                         style: const TextStyle(
