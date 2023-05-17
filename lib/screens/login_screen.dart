@@ -52,17 +52,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
+                      const Expanded(
                           flex: 2,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                                 vertical: 36.0,
                                 horizontal: 24.0
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Text(
                                   "Log In",
                                   style: TextStyle(
