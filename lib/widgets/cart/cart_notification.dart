@@ -73,8 +73,8 @@ class _CartNotificationState extends State<CartNotification> {
                         settings: const RouteSettings(name: CartScreen.id),
                     );
                   },
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Text("View Cart", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                       SizedBox(width: 10,),
                       Icon(Icons.shopping_cart, color: Colors.white,)

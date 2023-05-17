@@ -108,12 +108,12 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
       child: Container(
         height: 56,
         color: Colors.red[400],
-        child: Center(
+        child: const Center(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.shopping_basket_outlined, color: Colors.white,),
                   SizedBox(width: 10,),
                   Text("Add to basket"),

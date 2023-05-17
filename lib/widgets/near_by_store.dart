@@ -119,10 +119,10 @@ class _NearByStoresState extends State<NearByStores> {
                           valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
                         ),
                       ),
-                      header: SliverToBoxAdapter(
+                      header: const SliverToBoxAdapter(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.only(left: 8, right: 8),
                               child: Text(
@@ -207,8 +207,8 @@ class _NearByStoresState extends State<NearByStores> {
                                           "${getDistance(data["location"])}km",
                                         ),
                                         const SizedBox(height: 3,),
-                                        Row(
-                                          children: const [
+                                        const Row(
+                                          children: [
                                             Icon(
                                               Icons.star,
                                               size: 12,

@@ -65,8 +65,8 @@ class AuthProvider with ChangeNotifier{
       context: context,
       builder: (BuildContext context){
       return AlertDialog(
-        title: Column(
-          children: const [
+        title: const Column(
+          children: [
             Text('Verification Code'),
             SizedBox(height: 5,),
             Text(
@@ -108,6 +108,7 @@ class AuthProvider with ChangeNotifier{
 
                     _userServices.getUserById(user.uid).then((snapshot) => {
                       if(snapshot.exists){
+                        locationData.getCurrentPosition(),
                         if(screen == 'Login'){
                           //Since it's login, no new data thus no need to update
                           Navigator.pushReplacementNamed(context, MainScreen.id)
@@ -121,6 +122,9 @@ class AuthProvider with ChangeNotifier{
                           number: user.phoneNumber.toString(),
                           location: GeoPoint(locationData.latitude as double, locationData.longitude as double),
                           address: locationData.selectedAddress!.name,
+                          firstName: null,
+                          lastName: null,
+                          email: null
                         ),
                         locationData.savePreferences(locationData.latitude as double, locationData.longitude as double, locationData.selectedAddress),
                         Navigator.pushReplacementNamed(context, MainScreen.id)
@@ -147,13 +151,16 @@ class AuthProvider with ChangeNotifier{
     });
   }
 
-  void _createUser({required String id, required String number, required GeoPoint location, required String? address}){
+  void _createUser({required String id, required String number, required GeoPoint location, required String? address, required String? firstName, required String? lastName, required String? email}){
     locationProvider.getCurrentPosition();
     _userServices.createUserData({
       'id': id,
       'number': number,
       'location': location,
-      'address': address
+      'address': address,
+      "firstName": firstName,
+      "lastName": lastName,
+      "email": email
     });
     loading = false;
     notifyListeners();
