@@ -78,8 +78,8 @@ class VendorAppBar extends StatelessWidget {
                               color: Colors.white
                           ),
                         ),
-                        Row(
-                          children: const [
+                        const Row(
+                          children: [
                             Icon(Icons.star, color: Colors.white,),
                             Icon(Icons.star, color: Colors.white,),
                             Icon(Icons.star, color: Colors.white,),

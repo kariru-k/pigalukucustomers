@@ -69,9 +69,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
-                    child: locationData.loading ? Row(
+                    child: locationData.loading ? const Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Text('Please Wait a Moment!'),
                         SizedBox(width: 10,),
                         CircularProgressIndicator(
