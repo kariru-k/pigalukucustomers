@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:piga_luku_customers/providers/auth_providers.dart';
 import 'package:piga_luku_customers/providers/cart_provider.dart';
 import 'package:piga_luku_customers/providers/coupon_provider.dart';
+import 'package:piga_luku_customers/screens/my_orders_screen.dart';
 import 'package:piga_luku_customers/screens/profile_screen.dart';
 import 'package:piga_luku_customers/services/cart_services.dart';
 import 'package:piga_luku_customers/services/store_services.dart';
@@ -58,6 +60,7 @@ class _CartScreenState extends State<CartScreen> {
     var couponProvider = Provider.of<CouponProvider>(context);
     OrderServices orderServices = OrderServices();
     CartServices cartServices = CartServices();
+    var phoneNumberController = TextEditingController();
 
     if (couponProvider.discountRate != 0) {
       setState(() {
@@ -77,6 +80,38 @@ class _CartScreenState extends State<CartScreen> {
     locationProvider.getPrefs().then((value){
       address = "${value[0]}, ${value[1]}, ${value[2]}";
     });
+    
+    Future openDialog() =>
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          // false = user must tap button, true = tap outside dialog
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: const Text('Pay Via M-Pesa'),
+              content: TextField(
+                autofocus: true,
+                maxLength: 9,
+                keyboardType: TextInputType.number,
+                controller: phoneNumberController,
+                decoration: const InputDecoration(
+                  hintText: "Enter The Phone Number you will Pay With",
+                  prefixText: "+254"
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Initiate Payment'),
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                    EasyLoading.show(status: "Please Wait...");
+
+                  },
+                ),
+              ],
+            );
+          },
+        );
 
     saveOrder(CartProvider cartProvider, payable, CouponProvider couponProvider){
       orderServices.saveOrder({
@@ -198,21 +233,60 @@ class _CartScreenState extends State<CartScreen> {
                             backgroundColor: Colors.redAccent
                         ),
                         onPressed: (){
-                          EasyLoading.show(status: "Please Wait...");
-                          userServices.getUserById(user!.uid).then((value){
-                            if (value["id"] == null) {
-                              EasyLoading.dismiss();
-                              PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
-                                context,
-                                screen: const ProfileScreen(),
-                                settings: const RouteSettings(name: ProfileScreen.id),
-                              );
-                            } else {
-                              EasyLoading.show(status: "Please wait...");
-                              saveOrder(cartProvider, payable, couponProvider);
-                              EasyLoading.showSuccess("Order submitted successfully");
-                            }
-                          });
+                          showCupertinoDialog(
+                              context: context,
+                              builder: (BuildContext context){
+                                return CupertinoAlertDialog(
+                                  title: const Text("Place Order"),
+                                  content: Text("Are you sure you want to order these items from ${widget.document!["shopName"]}?"),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: (){
+                                          if(cartProvider.cod == true){
+                                            EasyLoading.show(status: "Please Wait...");
+                                            userServices.getUserById(user!.uid).then((value){
+                                              if (value["id"] == null) {
+                                                EasyLoading.dismiss();
+                                                PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                                  context,
+                                                  screen: const ProfileScreen(),
+                                                  settings: const RouteSettings(name: ProfileScreen.id),
+                                                );
+                                              } else {
+                                                EasyLoading.show(status: "Please wait...");
+                                                saveOrder(cartProvider, payable, couponProvider);
+                                                EasyLoading.showSuccess("Order submitted successfully");
+                                                PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                                  context,
+                                                  screen: const MyOrders(),
+                                                  settings: const RouteSettings(name: MyOrders.id),
+                                                );
+                                              }
+                                            });
+                                          } else {
+                                            openDialog().then((value){
+                                              Navigator.pop(context);
+                                            });
+                                          }
+                                        },
+                                        child: Text(
+                                          "YES",
+                                          style: TextStyle(color: Theme.of(context).primaryColor),
+                                        )
+                                    ),
+                                    TextButton(
+                                        onPressed: (){
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "NO",
+                                          style: TextStyle(color: Theme.of(context).primaryColor),
+                                        )
+                                    )
+                                  ],
+                                );
+                              }
+                          );
                         },
                         child: const Text(
                           "CHECKOUT",
@@ -308,7 +382,7 @@ class _CartScreenState extends State<CartScreen> {
                   const CodToggleSwitch(),
                   Divider(color: Colors.grey[300],),
                   CartList(document: widget.document,),
-                  CouponWidget(couponVendor: doc!["uid"],),
+                  doc != null ? CouponWidget(couponVendor: doc!["uid"],) : Container(),
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0, left: 4.0, top: 4, bottom: 80),
                     child: SizedBox(

@@ -21,8 +21,10 @@ class ProductCard extends StatelessWidget {
     Map quantities = document["quantity"];
     List sizes = [];
 
-    for (var element in quantities.keys) {
-      sizes.add(element);
+    for (var item in quantities.entries) {
+      if(item.value > 0){
+        sizes.add(item.key);
+      }
     }
 
     var stringSizes = sizes.join(", ");

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mpesa_flutter_plugin/initializer.dart';
+import 'package:mpesa_flutter_plugin/payment_enums.dart';
 
 class CartServices{
   CollectionReference cart = FirebaseFirestore.instance.collection("cart");
@@ -78,6 +80,28 @@ class CartServices{
   Future<DocumentSnapshot>getShopName() async {
     DocumentSnapshot doc = await cart.doc(user!.uid).get();
     return doc;
+  }
+
+  Future<dynamic> startTransaction({required tillNumber, required phoneNumber, required amount, required sellerNumber}) async {
+    dynamic transactionInitialisation;
+    try {
+      transactionInitialisation =
+          await MpesaFlutterPlugin.initializeMpesaSTKPush(
+              businessShortCode: tillNumber,
+              transactionType: TransactionType.CustomerBuyGoodsOnline,
+              amount: amount,
+              partyA: phoneNumber,
+              partyB: tillNumber,
+              callBackURL: Uri(),
+              accountReference: sellerNumber,
+              phoneNumber: phoneNumber,
+              baseUri: Uri(scheme: "https", host: "sandbox.safaricom.co.ke"),
+              transactionDesc: "Payment for goods to Vendor $sellerNumber",
+              passKey: "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
+          );
+    } catch (error) {
+      print(error);
+    }
   }
 
 }

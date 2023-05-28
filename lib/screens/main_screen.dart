@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-import 'package:piga_luku_customers/screens/favourite_screen.dart';
 import 'package:piga_luku_customers/screens/home_screen.dart';
 import 'package:piga_luku_customers/screens/my_orders_screen.dart';
 import 'package:piga_luku_customers/screens/profile_screen.dart';
@@ -21,7 +20,6 @@ class MainScreen extends StatelessWidget {
     List<Widget> buildScreens() {
       return [
         const HomeScreen(),
-        const FavouritesScreen(),
         const MyOrders(),
         const ProfileScreen()
       ];
@@ -32,12 +30,6 @@ class MainScreen extends StatelessWidget {
         PersistentBottomNavBarItem(
           icon: const Icon(CupertinoIcons.home),
           title: ("Home"),
-          activeColorPrimary: Theme.of(context).primaryColor,
-          inactiveColorPrimary: CupertinoColors.systemGrey,
-        ),
-        PersistentBottomNavBarItem(
-          icon: const Icon(CupertinoIcons.square_favorites_alt),
-          title: ("My Favourites"),
           activeColorPrimary: Theme.of(context).primaryColor,
           inactiveColorPrimary: CupertinoColors.systemGrey,
         ),

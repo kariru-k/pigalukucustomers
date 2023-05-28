@@ -25,7 +25,7 @@ class _CodToggleSwitchState extends State<CodToggleSwitch> {
           onSelected: (index, instance){
             cart.getPaymentMethod(index);
           },
-          labels: const ["Cash on Delivery", "Pay Online"],
+          labels: const ["Cash on Delivery", "Pay Via M-Pesa"],
       ),
     );
   }

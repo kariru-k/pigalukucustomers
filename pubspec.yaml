@@ -39,6 +39,7 @@ dependencies:
   fk_toggle: ^0.1.4
   dotted_border: ^2.0.0+3
   intl:
+  mpesa_flutter_plugin:
 
 
 dev_dependencies:
