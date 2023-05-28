@@ -25,7 +25,7 @@ import 'package:piga_luku_customers/screens/register_screen.dart';
 import 'package:piga_luku_customers/screens/splash_screen.dart';
 import 'package:piga_luku_customers/screens/vendor_home_screen.dart';
 import 'package:piga_luku_customers/screens/welcome_screen.dart';
-import 'package:piga_luku_customers/secrets.dart';
+import 'package:piga_luku_customers/secrets/secrets.dart';
 import 'package:provider/provider.dart';
 
 void main() async{

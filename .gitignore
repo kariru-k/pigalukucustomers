@@ -47,5 +47,4 @@ app.*.map.json
 
 # Ignore Gradle build output directory
 build
-/lib/secrets.dart
-
+/lib/secrets/
