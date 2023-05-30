@@ -11,7 +11,7 @@ class CartProvider with ChangeNotifier{
   DocumentSnapshot? document;
   String? address;
   double? distance;
-  bool cod = false;
+  bool cod = true;
   List cartList = [];
 
   Future<double>getCartTotal() async {

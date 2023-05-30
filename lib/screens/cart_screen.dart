@@ -1,3 +1,4 @@
+import 'dart:convert' as convert;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +17,7 @@ import 'package:piga_luku_customers/services/user_services.dart';
 import 'package:piga_luku_customers/widgets/cart/cart_list.dart';
 import 'package:piga_luku_customers/widgets/cart/cod_toggle.dart';
 import 'package:provider/provider.dart';
-
+import 'package:http/http.dart' as http;
 import '../providers/location_provider.dart';
 import '../services/order_services.dart';
 import '../widgets/cart/coupon_widget.dart';
@@ -41,6 +42,7 @@ class _CartScreenState extends State<CartScreen> {
   int deliveryfee = 0;
   String? address;
   bool loading = false;
+  var checkoutId;
 
 
   @override
@@ -75,12 +77,78 @@ class _CartScreenState extends State<CartScreen> {
       });
     }
 
+    var payable = cartProvider.subTotal! + deliveryfee - discount;
     userDetails.getUserDetails();
 
     locationProvider.getPrefs().then((value){
       address = "${value[0]}, ${value[1]}, ${value[2]}";
     });
-    
+
+    Future<http.Response> queryStatus(checkoutID) async {
+
+      var accessToken = await http.get(Uri.parse("https://us-central1-piga-luku-customer-app.cloudfunctions.net/main/ttoken"));
+
+      var jsonResponse = convert.jsonDecode(accessToken.body);
+      print(jsonResponse["message"]);
+
+      convert.Codec<String, String> stringToBase64 = convert.utf8.fuse(convert.base64);
+
+      var businessShortCode = doc!["mpesaTill"];
+      var passKey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919";
+      var timeStamp = DateTime.now().toString();
+      String result = timeStamp.replaceAll(RegExp('[^A-Za-z0-9]'), '').substring(0, 14);
+      print(result);
+      var password = stringToBase64.encode(businessShortCode.toString() + passKey + result.toString());
+
+      var response = await http.post(
+          Uri.parse("https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query"),
+          headers: {
+            "Authorization": "Bearer ${jsonResponse["message"]}",
+            "Content-Type": 'application/json'
+          },
+          body: convert.jsonEncode(
+              {
+                "BusinessShortCode": doc!["mpesaTill"],
+                "Password": password,
+                "Timestamp": result,
+                "CheckoutRequestID": checkoutID
+              }
+          )
+      );
+
+      print(convert.json.decode(response.body));
+
+      return response;
+    }
+
+
+    saveOrder(CartProvider cartProvider, payable, CouponProvider couponProvider, String orderStatus, String? checkoutRequestId){
+      orderServices.saveOrder({
+        "products": cartProvider.cartList,
+        "userID": user!.uid,
+        "deliveryFee": deliveryfee,
+        "total": payable,
+        "discount": discount,
+        "cod": cartProvider.cod,
+        "discountCode": couponProvider.document == null ? null : couponProvider.document!["title"],
+        "seller": {
+          "shopName": widget.document!["shopName"],
+          "sellerId": widget.document!["sellerUid"]
+        },
+        "timestamp": DateTime.now().toString(),
+        "orderStatus": orderStatus,
+        "deliveryBoy": null,
+        "checkOutRequestID": checkoutRequestId,
+      }).then((value){
+        cartServices.deleteCart().then((value){
+          cartServices.checkData().then((value){
+            EasyLoading.showSuccess("Order submitted successfully");
+            Navigator.pop(context);
+          });
+        });
+      });
+    }
+
     Future openDialog() =>
         showDialog<void>(
           context: context,
@@ -103,9 +171,48 @@ class _CartScreenState extends State<CartScreen> {
                 TextButton(
                   child: const Text('Initiate Payment'),
                   onPressed: () {
+                    cartServices.startTransaction(
+                        tillNumber: doc!["mpesaTill"],
+                        phoneNumber: "254${phoneNumberController.text}",
+                        amount: payable,
+                        sellerNumber: widget.document!["sellerUid"],
+                        context: context
+                    ).then((value){
+                      checkoutId = value;
+                      EasyLoading.show(status: "Please Wait");
+                    });
+                    if(checkoutId != null){
+                      Future.delayed(const Duration(seconds: 20)).then((value){
+                        queryStatus(checkoutId).then((response){
+                          var jsonResponse = convert.jsonDecode(response.body);
+                          if(jsonResponse["ResultCode"] == "0"){
+                            EasyLoading.show(status: "Please Wait...");
+                            userServices.getUserById(user!.uid).then((value){
+                              if (value["id"] == null) {
+                                EasyLoading.dismiss();
+                                PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                  context,
+                                  screen: const ProfileScreen(),
+                                  settings: const RouteSettings(name: ProfileScreen.id),
+                                );
+                              } else {
+                                EasyLoading.show(status: "Please wait...");
+                                saveOrder(cartProvider, payable, couponProvider, "Ordered", checkoutId);
+                                EasyLoading.showSuccess("Order submitted successfully");
+                                PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                  context,
+                                  screen: const MyOrders(),
+                                  settings: const RouteSettings(name: MyOrders.id),
+                                );
+                              }
+                            });
+                          } else {
+                            EasyLoading.showError("There was an error processing your request", duration: const Duration(seconds: 3));
+                          }
+                        });
+                      });
+                    }
                     Navigator.pop(dialogContext);
-                    EasyLoading.show(status: "Please Wait...");
-
                   },
                 ),
               ],
@@ -113,33 +220,8 @@ class _CartScreenState extends State<CartScreen> {
           },
         );
 
-    saveOrder(CartProvider cartProvider, payable, CouponProvider couponProvider){
-      orderServices.saveOrder({
-        "products": cartProvider.cartList,
-        "userID": user!.uid,
-        "deliveryFee": deliveryfee,
-        "total": payable,
-        "discount": discount,
-        "cod": cartProvider.cod,
-        "discountCode": couponProvider.document == null ? null : couponProvider.document!["title"],
-        "seller": {
-          "shopName": widget.document!["shopName"],
-          "sellerId": widget.document!["sellerUid"]
-        },
-        "timestamp": DateTime.now().toString(),
-        "orderStatus": "Ordered",
-        "deliveryBoy": null
-      }).then((value){
-        cartServices.deleteCart().then((value){
-          cartServices.checkData().then((value){
-            EasyLoading.showSuccess("Order submitted successfully");
-            Navigator.pop(context);
-          });
-        });
-      });
-    }
 
-    var payable = cartProvider.subTotal! + deliveryfee - discount;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       bottomSheet: Container(
@@ -254,7 +336,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 );
                                               } else {
                                                 EasyLoading.show(status: "Please wait...");
-                                                saveOrder(cartProvider, payable, couponProvider);
+                                                saveOrder(cartProvider, payable, couponProvider, "Ordered", null);
                                                 EasyLoading.showSuccess("Order submitted successfully");
                                                 PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                                                   context,
@@ -264,8 +346,21 @@ class _CartScreenState extends State<CartScreen> {
                                               }
                                             });
                                           } else {
-                                            openDialog().then((value){
-                                              Navigator.pop(context);
+                                            EasyLoading.show(status: "Please Wait...");
+                                            userServices.getUserById(user!.uid).then((value){
+                                              if (value["id"] == null) {
+                                                EasyLoading.dismiss();
+                                                PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
+                                                  context,
+                                                  screen: const ProfileScreen(),
+                                                  settings: const RouteSettings(name: ProfileScreen.id),
+                                                );
+                                              } else {
+                                                EasyLoading.dismiss();
+                                                openDialog().then((value){
+                                                  Navigator.pop(context);
+                                                });
+                                              }
                                             });
                                           }
                                         },

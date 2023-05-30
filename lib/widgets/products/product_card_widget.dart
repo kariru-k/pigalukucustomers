@@ -56,7 +56,7 @@ class ProductCard extends StatelessWidget {
                         PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                             context,
                             screen: ProductDetailsScreen(document: document),
-                            withNavBar: true,
+                            withNavBar: false,
                             settings: const RouteSettings(name: ProductDetailsScreen.id),
                         );
                       },

@@ -57,10 +57,10 @@ class _CartNotificationState extends State<CartNotification> {
                           Text("Kshs. ${cartProvider.subTotal!.toStringAsFixed(0)}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
                         ],
                       ),
-                      Text(
+                      document != null ? Text(
                         "From ${document!["shopName"]}",
                         style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
+                      ) : Container(),
                     ],
                   ),
                 ),

@@ -76,18 +76,7 @@ class _AddToCartWidgetState extends State<AddToCartWidget> {
 
 
 
-    return _loading
-        ?
-    SizedBox(
-      height: 56,
-      child: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
-        ),
-      ),
-    )
-        :
-    _exist
+    return _exist
         ?
     CounterWidget(document: widget.document, quantity: quantity.toInt(), docId: docId.toString(), size: widget.size,)
         :

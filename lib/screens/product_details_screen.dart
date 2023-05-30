@@ -100,7 +100,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width - 320,
+                    width: MediaQuery.of(context).size.width - 280,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                           color:Colors.lightGreen, //background color of dropdown button
