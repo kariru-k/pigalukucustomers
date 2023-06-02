@@ -42,6 +42,8 @@ dependencies:
   mpesa_flutter_plugin:
   cloud_functions:
   http:
+  firebase_messaging:
+  flutter_local_notifications:
 
 
 dev_dependencies:

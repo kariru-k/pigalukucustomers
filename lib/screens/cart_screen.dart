@@ -2,6 +2,7 @@ import 'dart:convert' as convert;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -43,6 +44,7 @@ class _CartScreenState extends State<CartScreen> {
   String? address;
   bool loading = false;
   var checkoutId;
+  String? mtoken;
 
 
   @override
@@ -51,7 +53,46 @@ class _CartScreenState extends State<CartScreen> {
     store.getShopDetails(widget.document!["sellerUid"]).then((value){
       doc = value;
     });
+    requestPermission();
+    getToken(widget.document!["sellerUid"]);
   }
+
+  void requestPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      sound: true,
+      criticalAlert: true
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized){
+      print("User granted permission");
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional){
+      print("User granted provisional permission");
+    } else {
+      print("No permission granted");
+    }
+  }
+
+  void getToken(sellerid) async {
+    await FirebaseMessaging.instance.getToken().then((token){
+      setState(() {
+        mtoken = token;
+      });
+      saveToken(token!, sellerid);
+    });
+  }
+
+  void saveToken(String token, sellerId) async{
+    await store.vendors.doc(sellerId).update({
+      'token': token
+    });
+  }
+
+
 
 
   @override
@@ -143,10 +184,40 @@ class _CartScreenState extends State<CartScreen> {
         cartServices.deleteCart().then((value){
           cartServices.checkData().then((value){
             EasyLoading.showSuccess("Order submitted successfully");
-            Navigator.pop(context);
           });
         });
       });
+    }
+
+    void sendPushMessage(String token) async{
+      try {
+        await http.post(
+            Uri.parse("https://fcm.googleapis.com/fcm/send"),
+            headers: {
+              "Content-Type": 'application/json',
+              "Authorization": "key=AAAAWtg9ThQ:APA91bEhNRSqtGgLKceqrfkVbxFZZf0JzOKRQQFWjjdpJKHHD-rY1ApAoqR0XDz1sW9tT6Ifc8JUVczJL2wLke1eOTQr3zaUQTM6YhDPta2tGq9L7VnyJddVbCn1S6D0YYlzlaMBlBCw"
+            },
+            body: convert.jsonEncode(
+                {
+                  'priority': 'high',
+                  'data': {
+                    'click-action': 'FLUTTER_NOTIFICATION_CLICK',
+                    'status': 'done',
+                    'body': "You Have A New Order",
+                    'title': "New Order"
+                  },
+                  'notification': {
+                    'title': "New Order",
+                    'body': "You Have A New Order",
+                    'android_channel_id': "Piga Luku"
+                  },
+                  "to": token
+                }
+            )
+        );
+      } catch (e){
+        print(e);
+      }
     }
 
     Future openDialog() =>
@@ -182,7 +253,7 @@ class _CartScreenState extends State<CartScreen> {
                       EasyLoading.show(status: "Please Wait");
                     });
                     if(checkoutId != null){
-                      Future.delayed(const Duration(seconds: 20)).then((value){
+                      Future.delayed(const Duration(seconds: 35)).then((value){
                         queryStatus(checkoutId).then((response){
                           var jsonResponse = convert.jsonDecode(response.body);
                           if(jsonResponse["ResultCode"] == "0"){
@@ -206,6 +277,7 @@ class _CartScreenState extends State<CartScreen> {
                                 );
                               }
                             });
+                            sendPushMessage(doc!["token"]);
                           } else {
                             EasyLoading.showError("There was an error processing your request", duration: const Duration(seconds: 3));
                           }
@@ -325,6 +397,7 @@ class _CartScreenState extends State<CartScreen> {
                                     TextButton(
                                         onPressed: (){
                                           if(cartProvider.cod == true){
+                                            Navigator.pop(context);
                                             EasyLoading.show(status: "Please Wait...");
                                             userServices.getUserById(user!.uid).then((value){
                                               if (value["id"] == null) {
@@ -335,9 +408,11 @@ class _CartScreenState extends State<CartScreen> {
                                                   settings: const RouteSettings(name: ProfileScreen.id),
                                                 );
                                               } else {
+                                                Navigator.pop(context);
                                                 EasyLoading.show(status: "Please wait...");
                                                 saveOrder(cartProvider, payable, couponProvider, "Ordered", null);
                                                 EasyLoading.showSuccess("Order submitted successfully");
+                                                sendPushMessage(doc!["token"]);
                                                 PersistentNavBarNavigator.pushNewScreenWithRouteSettings(
                                                   context,
                                                   screen: const MyOrders(),
