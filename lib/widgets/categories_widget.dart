@@ -42,9 +42,6 @@ class _VendorCategoriesState extends State<VendorCategories> {
   Widget build(BuildContext context) {
 
     var storeprovider = Provider.of<StoreProvider>(context);
-
-
-
     return FutureBuilder(
       future: services.category.get(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){

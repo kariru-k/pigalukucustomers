@@ -50,8 +50,7 @@ class _TopPickStoreState extends State<TopPickStore> {
               height: 40,
               width: 40,
               child: CircularProgressIndicator()),
-          )
-        ;
+          );
         }
 
         List shopDistance = [];
@@ -111,7 +110,6 @@ class _TopPickStoreState extends State<TopPickStore> {
                     scrollDirection: Axis.horizontal,
                     children: snapshot.data!.docs.map((DocumentSnapshot document){
                       if(double.parse(getDistance(document['location'])) <= 5){
-
                         return InkWell(
                           onTap: () {
                             storeData.getSelectedStore(document, getDistance(document['location']));
@@ -122,7 +120,6 @@ class _TopPickStoreState extends State<TopPickStore> {
                                 settings: const RouteSettings(name: VendorHomeScreen.id),
                             );
                           },
-
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: SizedBox(
